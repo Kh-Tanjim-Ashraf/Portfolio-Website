@@ -16,11 +16,12 @@ body {
   box-sizing: border-box;
   -webkit-font-smoothing: antialiased;
 }
+/* Header Section */
 header {
   background-color: var(--dark);
-  height: 800px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 65% 85%, 0 100%);
 }
-.nav-container {
+.header-container {
   max-width: 1152px;
   padding: 0 15px;
   margin: 0 auto;
@@ -30,16 +31,46 @@ header nav .nav-links a {
   text-decoration: none;
   margin-right: 2rem;
   text-transform: uppercase;
-  transition: all .2s ease;
+  transition: all 0.2s ease;
 }
 header nav .nav-links a:hover {
-    color: var(--primary);
+  color: var(--primary);
 }
 header nav {
   padding: 2rem 0;
 }
 header nav .logo {
   margin-right: 3rem;
+}
+/* Hero Section */
+header .hero {
+  /* margin-top: 10rem; */
+  padding: 13rem 0;
+}
+header .hero .left {
+  /* background: #b5ff2b; */
+  margin-right: 3rem;
+}
+header .hero .right {
+  /* background: #a43333; */
+  max-width: 600px;
+}
+header .hero .right{
+  color: var(--pure);
+}
+header .hero .right h1 {
+  margin-bottom: .5rem;
+  font-size: 3.5rem;
+  font-weight: 100;
+}
+header .hero .right p{
+    line-height: 1.7;
+}
+header .hero .right .cta {
+  margin-top: 1.5rem;
+}
+header .hero .right .cta .btn:nth-child(1) {
+  margin-right: 1rem;
 }
 /* .left{
     background: pink;

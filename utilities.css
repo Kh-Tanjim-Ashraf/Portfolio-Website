@@ -15,6 +15,7 @@
   cursor: pointer;
   border: 2px solid transparent;
   transition: all 0.2s ease;
+  border-radius: .3rem;
 }
 .btn-primary {
   background: var(--primary);
