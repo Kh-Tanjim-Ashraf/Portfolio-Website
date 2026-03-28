@@ -7,6 +7,9 @@
 .justify-between {
   justify-content: space-between;
 }
+.justify-start {
+  justify-content: flex-start;
+}
 .btn {
   padding: 0.8rem 3rem;
   font-size: 0.85rem;
