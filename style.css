@@ -55,22 +55,97 @@ header .hero .right {
   /* background: #a43333; */
   max-width: 600px;
 }
-header .hero .right{
+header .hero .right {
   color: var(--pure);
 }
 header .hero .right h1 {
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
   font-size: 3.5rem;
   font-weight: 100;
 }
-header .hero .right p{
-    line-height: 1.7;
+header .hero .right p {
+  line-height: 1.7;
 }
 header .hero .right .cta {
   margin-top: 1.5rem;
 }
 header .hero .right .cta .btn:nth-child(1) {
   margin-right: 1rem;
+}
+/* About Me Section */
+.about-me {
+  max-width: 1152px;
+  /* background: #ebc2c2; */
+  padding: 0 15px;
+  margin: 0 auto;
+  margin-top: 6rem;
+}
+.about-me .left .description-container {
+  max-width: 90%;
+  /* background: #772020; */
+}
+.about-me .right .image-container {
+  position: relative;
+  color: var(--pure);
+}
+.about-me .right .image-container img {
+  border-radius: 1rem;
+}
+.about-me .right .image-container h3,
+.about-me .right .image-container p {
+  position: absolute;
+  left: 10%;
+  z-index: 1;
+  font-weight: 100;
+}
+.about-me .right .image-container h3 {
+  top: 1rem;
+}
+.about-me .right .image-container p {
+  bottom: 1rem;
+  font-size: 0.8rem;
+  font-weight: 100;
+  line-height: 1.6;
+}
+.image-container::after {
+  /* Create a pseudo-element for the vignette overlay */
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 350px;
+  width: 250px;
+  /* Apply the inset box shadow to create the dark corners */
+  box-shadow: inset 100px 0px 385px rgba(0, 0, 0, 0.7); /* Adjust color and spread as needed */
+  border-radius: 1rem;
+  pointer-events: none; /* Allows clicks to pass through the overlay to the image/links */
+}
+.about-me .left .description-container .title {
+  font-size: 2.5rem;
+  font-weight: 100;
+}
+.about-me .left .description-container .title span{
+    color: var(--primary);
+}
+.about-me .left .description-container .square-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 1rem;
+}
+.about-me .left .description-container .square-tags .tag {
+  display: inline-flex; /* key change */
+  align-items: center;
+  padding: 5px 12px;
+  border: 1px solid var(--ternary);
+  border-radius: 6px;
+  width: auto; /* ensures it adapts to content */
+  white-space: nowrap; /* prevents text breaking */
+}
+.about-me .left .description-container .square-tags .tag span {
+    margin-right: .3rem;
 }
 /* .left{
     background: pink;
