@@ -81,7 +81,6 @@ header .hero .right .cta .btn:nth-child(1) {
 }
 .about-me .left .description-container {
   max-width: 90%;
-  /* background: #772020; */
 }
 .about-me .right .image-container {
   position: relative;
@@ -107,7 +106,6 @@ header .hero .right .cta .btn:nth-child(1) {
   line-height: 1.6;
 }
 .image-container::after {
-  /* Create a pseudo-element for the vignette overlay */
   content: "";
   position: absolute;
   top: 0;
@@ -149,19 +147,21 @@ header .hero .right .cta .btn:nth-child(1) {
 /* Skills Section */
 .skills {
   background: var(--light);
-  margin-bottom: 10rem;
+  /* margin-bottom: 10rem; */
   padding: 10rem 0;
 }
 .skills-container {
   max-width: 1152px;
   padding: 0 15px;
   margin: 0 auto;
-  gap: 3.3rem;
+  gap: 3rem;
   flex-wrap: wrap;
 }
 .skills-container .title {
-  text-align: center;
-  padding: 4rem 2.5rem;
+  /* text-align: center; */
+  padding: 4rem 0rem;
+  font-weight: 100;
+  font-size: 2.5rem;
 }
 .skills .skills-container .skill {
   padding: 2rem 2rem;
@@ -171,19 +171,22 @@ header .hero .right .cta .btn:nth-child(1) {
   border-radius: 6px;
 }
 .skills .skills-container .skill .skill-header .logo {
-    margin-right: .8rem;
+  margin-right: 0.8rem;
+}
+.skills .skills-container .skill .skill-header h2 {
+  margin-top: -0.4rem;
 }
 .skills .skills-container .skill-desc p {
   font-size: 0.8rem;
   font-weight: 100;
-  margin-top: .3rem;
+  margin-top: 0.3rem;
 }
 .skills .skills-container .skill-desc progress {
   border: 1px solid var(--ternary);
   border-radius: 7px;
   box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
   margin-top: 1.5rem;
-  height: .4rem;
+  height: 0.4rem;
 }
 .skills .skills-container .skill-desc progress::-webkit-progress-bar {
   background-color: transparent;
@@ -193,10 +196,3 @@ header .hero .right .cta .btn:nth-child(1) {
   background-color: var(--primary);
   border-radius: 7px;
 }
-/* .left{
-    background: pink;
-}
-.right{
-    background: rgb(118, 40, 53);
-    padding: 1rem;
-} */
