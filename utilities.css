@@ -18,11 +18,11 @@
   cursor: pointer;
   border: 2px solid transparent;
   transition: all 0.2s ease;
-  border-radius: .3rem;
+  border-radius: 0.3rem;
 }
 .btn-primary {
   background: var(--primary);
-  color: var(--secondary);
+  color: var(--dark);
 }
 .btn-primary:hover {
   background: transparent;

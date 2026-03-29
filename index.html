@@ -19,7 +19,7 @@
           <div class="left flex items-center justify-between">
             <div class="logo">
               <img
-                src="/images/logo.jpg"
+                src="/images/logo.png"
                 alt="Portfolio-Logo"
                 height="50"
                 width="50"
@@ -27,21 +27,22 @@
             </div>
             <div class="nav-links">
               <a href="#">Home</a>
-              <a href="#">About</a>
-              <a href="#">Skills</a>
-              <a href="#">Projects</a>
-              <a href="#">Blog</a>
+              <a href="#about-me">About</a>
+              <a href="#skills">Skills</a>
+              <a href="#projects">Projects</a>
             </div>
           </div>
           <div class="right">
-            <button class="btn btn-primary">Contact Me</button>
+            <a href="#contact">
+              <button class="btn btn-primary">Contact Me</button>
+            </a>
           </div>
         </nav>
         <!-- Hero -->
         <div class="hero flex justify-between items-center">
           <div class="left">
             <img
-              src="images/logo.jpg"
+              src="images/my-dp.jpg"
               alt="Hero Image"
               height="400"
               width="400"
@@ -55,15 +56,17 @@
               dolor sit amet consectetur adipisicing elit. Odit, necessitatibus.
             </p>
             <div class="cta">
-              <button class="btn">My Projects</button>
-              <button class="btn">Download CV</button>
+              <a href="#projects">
+                <button class="btn btn-project">My Projects</button>
+              </a>
+              <button class="btn btn-cv">Download CV</button>
             </div>
           </div>
         </div>
       </div>
     </header>
     <!-- About Me Section -->
-    <section class="about-me flex items-center">
+    <section class="about-me flex items-center" id="about-me">
       <div class="left">
         <div class="description-container">
           <h2 class="title">About <span>Me</span></h2>
@@ -102,9 +105,9 @@
       </div>
     </section>
     <!-- Skills Section -->
-    <section class="skills">
+    <section class="skills" id="skills">
       <div class="skills-container flex justify-start">
-        <div class="flex justify-start">
+        <div class="flex justify-start items-center">
           <h2 class="title">Skills & Tools</h2>
         </div>
         <!-- Skills & Tools Showcasing Divs -->
@@ -216,7 +219,7 @@
       </div>
     </section>
     <!-- Projects Section -->
-    <section class="projects">
+    <section class="projects" id="projects">
       <div class="title-container">
         <h2 class="title">Projects<span>.</span></h2>
       </div>
@@ -264,7 +267,9 @@
           <!-- Project Description -->
           <div class="project-desc">
             <p>
-              Create a messaging platform utilizing WebSockets to handle real-time data.
+              Created a chat application designed for real-time digital
+              communication, allowing users to exchange text, voice, and
+              multimedia messages instantly over the internet.
             </p>
           </div>
           <!-- Stacks of Project -->
@@ -290,7 +295,9 @@
           <!-- Project Description -->
           <div class="project-desc">
             <p>
-              Created a robust backend for an online store, featuring product management, shopping carts, user authentication and payment integration.
+              Created a robust backend for an online store, featuring product
+              management, shopping carts, user authentication and payment
+              integration.
             </p>
           </div>
           <!-- Stacks of Project -->
@@ -316,7 +323,11 @@
           <!-- Project Description -->
           <div class="project-desc">
             <p>
-              A finance manager demonstrates complex data relationships and thoughtful data visualization. Complex forms with validation, charts for spending analysis (Chart.js/Recharts), budget vs. actual comparisons with visual indicators, transaction categorization UI, pagination controls
+              A finance manager demonstrates complex data relationships and
+              thoughtful data visualization. Complex forms with validation,
+              charts for spending analysis (Chart.js/Recharts), budget vs.
+              actual comparisons with visual indicators, transaction
+              categorization UI, pagination controls
             </p>
           </div>
           <!-- Stacks of Project -->
@@ -330,14 +341,13 @@
       </div>
     </section>
     <!-- Contact Section -->
-    <section class="contact">
+    <section class="contact" id="contact">
       <div class="contact-container">
         <h3>Get in Touch</h3>
         <h2>kh.tanjim.ashraf@gmail.com</h2>
         <div class="social-links flex">
-          <a href="#">GitHub</a>
-          <a href="#">LinkedIn</a>
-          <a href="#">X</a>
+          <a href="https://github.com/Kh-Tanjim-Ashraf">GitHub</a>
+          <a href="www.linkedin.com/in/kh-tanjim-ashraf-68873a381">LinkedIn</a>
         </div>
       </div>
     </section>
