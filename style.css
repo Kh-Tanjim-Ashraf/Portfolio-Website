@@ -196,6 +196,7 @@ header .hero .right .cta .btn:nth-child(1) {
   background-color: var(--primary);
   border-radius: 7px;
 }
+/* Project Section */
 .projects {
   /* margin-bottom: 10rem; */
   padding: 5rem 0;
@@ -205,7 +206,7 @@ header .hero .right .cta .btn:nth-child(1) {
   max-width: 1152px;
   margin: 3rem auto;
 }
-.projects .title-container h2{
+.projects .title-container h2 {
   margin-left: 1rem;
   font-size: 2.5rem;
   font-weight: 100;
@@ -231,7 +232,7 @@ header .hero .right .cta .btn:nth-child(1) {
   /* font-weight: 100; */
 }
 .projects .projects-container .project .project-desc p {
-  font-size: .8rem;
+  font-size: 0.8rem;
   font-weight: 100;
   padding: 1.5rem 0;
   line-height: 1.8;
@@ -245,7 +246,42 @@ header .hero .right .cta .btn:nth-child(1) {
   padding: 0.5rem;
   border-radius: 0.8rem;
 }
-.projects .projects-container .project .project-stacks .stack-tag p{
-  font-size: .8rem;
+.projects .projects-container .project .project-stacks .stack-tag p {
+  font-size: 0.8rem;
   font-weight: 100;
+}
+/* Contact Section */
+.contact {
+  /* margin-bottom: 10rem; */
+  background-color: var(--dark);
+}
+.contact .contact-container {
+  max-width: 1152px;
+  text-align: center;
+  margin: 0 auto;
+  padding: 5rem 15px;
+}
+.contact .contact-container h2,
+.contact .contact-container h3 {
+  color: var(--light);
+}
+.contact .contact-container h3 {
+  margin-bottom: 2rem;
+}
+.contact h3 {
+  font-weight: 100;
+}
+.contact .social-links {
+  /* background: #af8b8b; */
+  padding: 2rem 0;
+  text-decoration: underline;
+  justify-content: space-evenly;
+}
+.contact .social-links a{
+  text-decoration: none;
+  color: var(--light);
+  transition: all .2s ease;
+}
+.contact .social-links a:hover{
+  color: var(--primary);
 }
