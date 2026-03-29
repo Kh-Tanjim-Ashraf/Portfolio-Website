@@ -196,3 +196,56 @@ header .hero .right .cta .btn:nth-child(1) {
   background-color: var(--primary);
   border-radius: 7px;
 }
+.projects {
+  /* margin-bottom: 10rem; */
+  padding: 5rem 0;
+}
+.projects .title-container {
+  /* background: var(--light); */
+  max-width: 1152px;
+  margin: 3rem auto;
+}
+.projects .title-container h2{
+  margin-left: 1rem;
+  font-size: 2.5rem;
+  font-weight: 100;
+}
+.projects .projects-container {
+  /* background: var(--light); */
+  max-width: 1152px;
+  padding: 0 15px;
+  margin: 0 auto;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+.projects .projects-container .project {
+  width: 20rem;
+  /* border: 1px solid var(--ternary); */
+  border-radius: 0.8rem;
+  padding: 1rem 1.5rem;
+  background: var(--light);
+  box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.19);
+}
+.projects .projects-container .project .title-header h2 {
+  font-size: 1.5rem;
+  /* font-weight: 100; */
+}
+.projects .projects-container .project .project-desc p {
+  font-size: .8rem;
+  font-weight: 100;
+  padding: 1.5rem 0;
+  line-height: 1.8;
+}
+.projects .projects-container .project .project-stacks {
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.projects .projects-container .project .project-stacks .stack-tag {
+  background: var(--primary);
+  padding: 0.5rem;
+  border-radius: 0.8rem;
+}
+.projects .projects-container .project .project-stacks .stack-tag p{
+  font-size: .8rem;
+  font-weight: 100;
+}
