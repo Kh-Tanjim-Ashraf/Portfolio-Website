@@ -128,6 +128,12 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# URL that handles the media served from MEDIA_ROOT
+MEDIA_URL = '/media/'
+
+# Absolute filesystem path to the directory that will hold user-uploaded files
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
