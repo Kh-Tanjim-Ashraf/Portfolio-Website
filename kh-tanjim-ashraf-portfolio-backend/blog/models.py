@@ -1,3 +1,95 @@
 from django.db import models
+from shared.models import TimestampMixins
+from django.utils.text import slugify
+from django.contrib.auth.models import User
+import uuid
 
-# Create your models here.
+
+
+class Category(TimestampMixins):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True, blank=True) # blank=True allows empty form submission
+    description = models.CharField(max_length=255, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+
+
+class Tag(TimestampMixins):
+    name = models.CharField(max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True, blank=True) # blank=True allows empty form submission
+
+    def __str__(self):
+            return self.name
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)
+        super().save(*args, **kwargs)
+
+
+
+class Post(TimestampMixins):
+    class Status(models.TextChoices):
+        DRAFT = 'D', 'Draft'
+        PUBLISHED = 'P', 'Published'
+    
+    title = models.CharField(max_length=255, unique=True)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    excerpt = models.CharField(max_length=200)
+    '''
+    Instead of forcing your server to convert Markdown to HTML every single time a visitor loads a page (which slows down your website), this function converts it exactly once when creating or editing the text. When visitors read your content, your server serves the pre-built content_html field instantly.
+    '''
+    content_markdown = models.TextField()
+    content_html = models.TextField(blank=True, editable=False) # blank=True, editable=False hides it from standard admin forms
+    cover_image = models.ImageField(upload_to='blog/post/coverImage')
+    category = models.ForeignKey(to=Category, on_delete=models.PROTECT, related_name='categories')
+    tag = models.ManyToManyField(to=Tag, related_name="tags")
+    author = models.ForeignKey(to=User, on_delete=models.DO_NOTHING)
+    status = models.CharField(max_length=1, choices=Status.choices, default=Status.DRAFT)
+    published_at = models.DateTimeField(null=True, blank=True)
+    reading_time = models.PositiveIntegerField(help_text="In minutes — computed from word count, ~200 words/minute", blank=True)
+    is_featured = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.category}: {self.title}'
+
+
+
+class PostLike(TimestampMixins):
+    post = models.ForeignKey(to=Post, on_delete=models.CASCADE, related_name='postLikes')
+    visitor_id = models.UUIDField(default=uuid.uuid4)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.ip_address}; {self.post.title}'
+
+
+
+class PostLikeViewCount(TimestampMixins):
+    post = models.OneToOneField(to=Post, on_delete=models.CASCADE, related_name='likesNviews')
+    like_count = models.PositiveIntegerField(default=0)
+    view_count = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return f'Like: {self.like_count}; Views: {self.view_count}; {self.post.title}'
+
+
+
+class Comment(TimestampMixins):
+    post = models.ForeignKey(to=Post, on_delete=models.CASCADE, related_name='comments')
+    name = models.CharField(max_length=150)
+    email = models.EmailField() # Default max_length=254
+    website = models.CharField(max_length=255, null=True, blank=True)
+    content = models.TextField()
+    parent = models.ForeignKey(to='self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
+    is_approved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.post}; {self.email}; {self.content[15]}...'
