@@ -1,3 +1,109 @@
 from django.db import models
+from shared.models import TimestampMixins
+from django.core.validators import MinValueValidator, MaxValueValidator, URLValidator
+from django.utils.text import slugify
 
-# Create your models here.
+
+
+class Skill(TimestampMixins):
+    class Category(models.TextChoices):
+        FRONTEND = 'Fe', 'Frontend'
+        BACKEND = 'Be', 'Backend'
+        DATABASE = 'Db', 'Database'
+        DEVOPS = 'Do', 'DevOps'
+        TOOLS = 'To', 'Tools'
+        SOFT_SKILL = 'Ss', 'Soft Skill'
+    
+    name = models.CharField(max_length=50, unique=True)
+    category = models.CharField(max_length=2, choices=Category.choices)
+    proficiency = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)])
+    icon = models.ImageField(upload_to='portfolio/icon/')
+    display_order = models.PositiveSmallIntegerField(default=0)
+    is_featured = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.name}---{self.category}'
+
+
+
+class Project(TimestampMixins):
+    class Category(models.TextChoices):
+        WEB = 'We', 'Web'
+        MOBILE = 'Mo', 'Mobile'
+        API = 'Ap', 'API'
+        ML = 'Ml', 'ML'
+        OTHER = 'Ot', 'Other'
+    
+    title = models.CharField(max_length=150, unique=True)
+    slug = models.SlugField(max_length=200, unique=True, blank=True) # blank=True allows empty form submission
+    skill = models.ManyToManyField(to=Skill, related_name="skills")
+    summary = models.CharField(max_length=200)
+    description = models.TextField()
+    cover_image = models.ImageField(upload_to="portfolio/project/coverImage/")
+    category = models.CharField(max_length=2, choices=Category.choices)
+    live_url = models.URLField(max_length=255, blank=True, null=True, validators=[URLValidator(schemes=['https'])])
+    github_url = models.URLField(max_length=255, blank=True, null=True, validators=[URLValidator(schemes=['https'])])
+    is_featured = models.BooleanField(default=False)
+    completed_date = models.DateTimeField(null=True, blank=True)
+    display_order = models.PositiveSmallIntegerField(default=0)
+
+    def __str__(self):
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
+
+
+
+class Experience(TimestampMixins):
+    class EmploymentTypes(models.TextChoices):
+        FULL_TIME = 'Ft', 'Full Time'
+        PART_TIME = 'Pt', 'Part Time'
+        INTERNSHIP = 'Ir', 'Internship'
+        FREELANCE = 'Fl', 'Freelance'
+        CONTRACT = 'Cr', 'Contract'
+    
+    company = models.CharField(max_length=150)
+    role = models.CharField(max_length=150)
+    employment_type = models.CharField(max_length=2, choices=EmploymentTypes.choices)
+    location = models.CharField(max_length=255)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField(null=True, blank=True)
+    is_current = models.BooleanField(default=False)
+    description = models.TextField()
+    company_url = models.URLField(max_length=255, null=True, blank=True, validators=[URLValidator(schemes=['https','http'])])
+    display_order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ['-start_date']
+
+    def __str__(self):
+        return f'{self.company}---{self.role}'
+
+
+
+class Education(TimestampMixins):
+    instituition = models.CharField(max_length=150) 
+    degree = models.CharField(max_length=30)
+    field_of_study = models.CharField(max_length=30)
+    start_year = models.DateTimeField()
+    end_year = models.DateTimeField(null=True, blank=True)
+    grade = models.CharField(max_length=30, null=True, blank=True)
+    description = models.CharField(null=True, blank=True)
+
+    def __str__(self):
+        return f'{self.instituition}---{self.degree}: {self.field_of_study}'
+
+
+
+class ContactMessage(TimestampMixins):
+    name = models.CharField(max_length=150)
+    email = models.EmailField() # Default max_length=254
+    subject = models.CharField(max_length=255)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'{self.name}---{self.email}---{self.subject}'
