@@ -58,7 +58,7 @@ class Post(TimestampMixins):
     is_featured = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'Category:{self.category}; Is-Read: {self.get_status_display()} {self.title}'
+        return f'Category:{self.category}; Is-Read: {self.get_status_display()}; Post: {self.title}'
 
     def save(self, *args, **kwargs):
         if not self.slug:
