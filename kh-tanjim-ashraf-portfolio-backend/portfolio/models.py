@@ -22,7 +22,7 @@ class Skill(TimestampMixins):
     is_featured = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self.name}---{self.category}'
+        return f'Skill: {self.name} --- Category: {self.get_category_display()} --- Proficiency: {self.proficiency} --- Display Order: {self.display_order}'
 
 
 
@@ -48,7 +48,7 @@ class Project(TimestampMixins):
     display_order = models.PositiveSmallIntegerField(default=0)
 
     def __str__(self):
-        return self.title
+        return f'{self.title} --- Display Order: {self.display_order}'
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -80,7 +80,7 @@ class Experience(TimestampMixins):
         ordering = ['-start_date']
 
     def __str__(self):
-        return f'{self.company}---{self.role}'
+        return f'{self.company}---{self.role}---Display Order: {self.display_order}'
 
 
 
