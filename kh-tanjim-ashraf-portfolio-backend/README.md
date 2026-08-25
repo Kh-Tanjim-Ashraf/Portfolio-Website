@@ -15,6 +15,7 @@ The backend of my portfolio website is built with Django REST Framework.
 - django-cors-headers
 - Pillow (_image upload_)
 - django-environ (_env variables_)
+- markdown (_markdown to html conversion_)
 - Database: SQLite is fine
 
 ## Features

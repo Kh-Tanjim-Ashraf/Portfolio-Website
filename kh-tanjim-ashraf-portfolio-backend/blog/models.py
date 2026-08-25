@@ -3,6 +3,7 @@ from shared.models import TimestampMixins
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 import uuid
+import markdown
 
 
 
@@ -63,6 +64,15 @@ class Post(TimestampMixins):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.title)
+
+        if self.content_markdown:
+            self.content_html = markdown.markdown(
+                self.content_markdown,
+                extensions = ['fenced_code', 'codehilite', 'tables']
+            )
+        else:
+            self.content_html = ""  # If user deleted/emptied the post content, this step makes sure the HTML field is also completely emptied out in the database.
+
         super().save(*args, **kwargs)
 
 
