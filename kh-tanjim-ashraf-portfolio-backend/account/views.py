@@ -17,7 +17,7 @@ class Login(APIView):
             password = serializer.validated_data.get('password')
 
             user = authenticate(username=username, password=password)
-            
+
             tokens = get_tokens_for_user(user)
         
         data = {
