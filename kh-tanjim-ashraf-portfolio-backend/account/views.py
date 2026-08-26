@@ -30,6 +30,7 @@ class Login(APIView):
                 'email': user.email
             }
         }
+
         return Response(data=data, status=status.HTTP_200_OK)
 
 
