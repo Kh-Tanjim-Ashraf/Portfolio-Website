@@ -19,19 +19,24 @@ class Login(APIView):
 
             user = authenticate(username=username, password=password)
 
+            # Mitigate AttributeError: NoneType' object has no attribute 'id' while accessing authenticated/anon user
+            if not user:
+                data = {"error": "Invalid credentials."}
+                return Response(data=data, status=status.HTTP_401_UNAUTHORIZED)
+            
             tokens = get_tokens_for_user(user)
         
-        data = {
-            'access': tokens.get('access_token'),
-            'refresh': tokens.get('refresh_token'),
-            'user': {
-                'id': user.id,
-                'username': user.username, 
-                'email': user.email
+            data = {
+                'access': tokens.get('access_token'),
+                'refresh': tokens.get('refresh_token'),
+                'user': {
+                    'id': user.id,
+                    'username': user.username, 
+                    'email': user.email
+                }
             }
-        }
 
-        return Response(data=data, status=status.HTTP_200_OK)
+            return Response(data=data, status=status.HTTP_200_OK)
 
 
 
