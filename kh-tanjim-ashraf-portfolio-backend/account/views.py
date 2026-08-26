@@ -35,6 +35,7 @@ class Login(APIView):
 
 
 class OwnerInfo(APIView):
+
     # API/View-level permission; Compels the user to send access token through the `Headers` of the reaquest
     permission_classes = [IsAuthenticated]
 
