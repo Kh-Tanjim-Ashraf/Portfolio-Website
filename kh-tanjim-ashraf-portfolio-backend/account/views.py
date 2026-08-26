@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from .serializers import UserLoginSerializer, OwnerInfoSerializer
+from .serializers import UserLoginSerializer, OwnerInfoSerializer, ChangePasswordSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
@@ -49,3 +49,22 @@ class OwnerInfo(APIView):
         serializer = OwnerInfoSerializer(request.user)
         
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+
+class ChangePassword(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user = request.user
+        
+        serializer = ChangePasswordSerializer(data=request.data, context={'user': user})
+
+        if serializer.is_valid(raise_exception=True):
+            # Change the old password; Beaware to make the password hashed
+            user.set_password(serializer.validated_data.get('new_password'))
+            user.save()
+            
+            data = {"message": "Passowrd has changed successfully!"}
+            return Response(data=data, status=status.HTTP_200_OK)
