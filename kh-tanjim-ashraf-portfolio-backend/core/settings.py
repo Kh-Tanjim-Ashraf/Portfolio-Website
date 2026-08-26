@@ -49,7 +49,12 @@ INSTALLED_APPS = [
     'account',
     'portfolio',
     'blog',
-    'shared'
+    'shared',
+    # Loads browseable API templates, static files, system checks, and management commands.
+    'rest_framework',
+    # Required for implementing refresh token blacklisting; Creates "OutstandingToken" & "BlacklistedToken" tables in the database
+    'rest_framework_simplejwt',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 MIDDLEWARE = [
@@ -147,19 +152,19 @@ MAILERS = {
 
 # REST Configurations
 REST_FRAMEWORK = {
+    # Every endpoits now exclusively seek for JWTs where authentication is implied
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
     ),
 }
 
 # JWT Configurations
 SIMPLE_JWT = {
-    # "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
-    # "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "ROTATE_REFRESH_TOKENS": True,
-    # "BLACKLIST_AFTER_ROTATION": False,
-    # "UPDATE_LAST_LOGIN": True   #TODO: Implement this for the custom `Login()` class # `last_login` field in the `auth_user` table is updated upon login (if used through default `TokenObtainPairView``).
+    "BLACKLIST_AFTER_ROTATION": True,
+    
+    #TODO: Implement this for the custom `Login()` class # `last_login` field in the `auth_user` table is updated upon login (if used only through default `TokenObtainPairView``).
+    # "UPDATE_LAST_LOGIN": True
 }

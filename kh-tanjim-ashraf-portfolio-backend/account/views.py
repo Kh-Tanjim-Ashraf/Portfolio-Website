@@ -35,7 +35,7 @@ class Login(APIView):
 
 
 class OwnerInfo(APIView):
-    # Compels the user to send access token through the `Headers` of the reaquest
+    # API/View-level permission; Compels the user to send access token through the `Headers` of the reaquest
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
