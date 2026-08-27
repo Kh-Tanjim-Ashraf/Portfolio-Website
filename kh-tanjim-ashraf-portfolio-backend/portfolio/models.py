@@ -3,19 +3,25 @@ from shared.models import TimestampMixins
 from django.core.validators import MinValueValidator, MaxValueValidator, URLValidator
 from django.utils.text import slugify
 
+'''
+# Anatomy of TextChoices:
+VARIABLE_NAME = "database_value", _("Human Readable Label")
 
+# Note: To filter by category, always provide the database_value from the client/django-view
+'''
 
 class Skill(TimestampMixins):
+    # TODO: Write a case study about why I changed the short form of category names to original form. Link to->`filter_by_search()` method of `SkillFilter` class in `filters.py` file
     class Category(models.TextChoices):
-        FRONTEND = 'Fe', 'Frontend'
-        BACKEND = 'Be', 'Backend'
-        DATABASE = 'Db', 'Database'
-        DEVOPS = 'Do', 'DevOps'
-        TOOLS = 'To', 'Tools'
-        SOFT_SKILL = 'Ss', 'Soft Skill'
+        FRONTEND = 'frontend', 'Frontend'
+        BACKEND = 'backend', 'Backend'
+        DATABASE = 'database', 'Database'
+        DEVOPS = 'devops', 'DevOps'
+        TOOLS = 'tools', 'Tools'
+        SOFT_SKILL = 'soft skill', 'Soft Skill'
     
     name = models.CharField(max_length=50, unique=True)
-    category = models.CharField(max_length=2, choices=Category.choices)
+    category = models.CharField(max_length=10, choices=Category.choices)
     proficiency = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)])
     icon = models.ImageField(upload_to='portfolio/icon/')
     display_order = models.PositiveSmallIntegerField(default=0)
