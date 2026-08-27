@@ -6,7 +6,7 @@ from django.core.validators import MaxValueValidator, URLValidator
 
 
 class Profile(TimestampMixins):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     full_name = models.CharField(max_length=150)
     headline = models.CharField(max_length=100)
     bio = models.TextField()

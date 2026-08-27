@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
-from .serializers import UserLoginSerializer, OwnerInfoSerializer, ChangePasswordSerializer
+from .serializers import UserLoginSerializer, OwnerInfoSerializer, ChangePasswordSerializer, ProfileSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
 from utils.jwt_token_generator import get_tokens_for_user
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from .models import Profile as ProfileModel
 
 
 class Login(APIView):
@@ -40,18 +41,6 @@ class Login(APIView):
 
 
 
-class OwnerInfo(APIView):
-
-    # API/View-level permission; Compels the user to send access token through the `Headers` of the reaquest
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        serializer = OwnerInfoSerializer(request.user)
-        
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
-
-
-
 class ChangePassword(APIView):
 
     permission_classes = [IsAuthenticated]
@@ -66,5 +55,62 @@ class ChangePassword(APIView):
             user.set_password(serializer.validated_data.get('new_password'))
             user.save()
             
-            data = {"message": "Passowrd has changed successfully!"}
+            data = {"message": "Passowrd has changed successfully."}
             return Response(data=data, status=status.HTTP_200_OK)
+
+
+
+class OwnerInfo(APIView):
+
+    # API/View-level permission; Compels the user to send access token through the `Headers` of the reaquest
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        serializer = OwnerInfoSerializer(request.user)
+        
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+
+class Profile(APIView):
+
+    # Apply permissions dynamically based on the request types: GET->Public; PATCH->Protected
+    def get_permissions(self):
+        # Evaluate the request type & assign permission class(es) accordingly
+        if self.request.method == "GET":
+            self.permission_classes = [AllowAny]
+
+        if self.request.method == "PATCH":
+            self.permission_classes = [IsAuthenticated]
+
+        # Instantiate & returns the list of permission class(es) on the fly by adding the `()` 
+        return [permission() for permission in self.permission_classes]
+
+    def get(self, request):
+        # Public API, thus returns my single profile record to any `GET` request
+        profile = ProfileModel.objects.first()
+        serializer = ProfileSerializer(instance=profile)
+
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request):
+        # Retrieve the profile belonging to the authenticated user
+        try:
+            userProfile = ProfileModel.objects.get(user=request.user)
+        except ProfileModel.DoesNotExist:
+            return Response({"error": "Profile not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = ProfileSerializer(instance=userProfile, data=request.data, partial=True)   # TODO: Require to pass the request through context to the serializer in order to help it building absolute URLs; Inspect this
+
+        if serializer.is_valid(raise_exception=True):
+
+            # Clean up old files from storage before saving new ones; TODO: Require further inspection
+            if 'avatar' in request.FILES and userProfile.avatar:
+                userProfile.avatar.delete(save=False)
+
+            if 'resume' in request.FILES and userProfile.resume:
+                userProfile.resume.delete(save=False)
+            
+            serializer.save()
+
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
