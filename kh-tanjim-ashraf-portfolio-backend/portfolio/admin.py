@@ -11,6 +11,12 @@ class SkillAdmin(admin.ModelAdmin):
     search_fields = ['id', 'name', 'category', 'proficiency', 'display_order']
 
 admin.site.register(Project)
-admin.site.register(Experience)
+
+@admin.register(Experience)
+class ExperienceAdmin(admin.ModelAdmin):
+    list_display = ['id', 'company', 'role', 'employment_type', 'start_date', 'end_date', 'is_current', 'display_order']
+    list_filter = ['employment_type', 'is_current', 'start_date', 'end_date']
+    search_fields = ['company', 'role', 'employment_type', 'location', 'start_date', 'end_date', 'description', 'company_url', 'display_order']
+
 admin.site.register(Education)
 admin.site.register(ContactMessage)
