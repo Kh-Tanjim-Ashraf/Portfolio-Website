@@ -25,9 +25,6 @@ class SkillFilter(django_filters.FilterSet):
 
     # The `name` maps to the key of the query-param. In this case, the `search` keyword from that class attribute
     def filter_by_search(self, queryset, name, value):
-        # print("query-key-name:", name)
-        # print("search-query-value:", value)
-        
         conditions = Q(name__icontains=value) | Q(category__icontains=value)
 
         try:
@@ -42,10 +39,6 @@ class SkillFilter(django_filters.FilterSet):
         if value.lower() == 'featured':
             conditions |= Q(is_featured=True)
 
-        # print("conditions:", conditions)
-        
         result = queryset.filter(conditions)
-
-        # print("result", result)
 
         return result
