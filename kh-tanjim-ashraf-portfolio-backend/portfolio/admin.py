@@ -18,5 +18,10 @@ class ExperienceAdmin(admin.ModelAdmin):
     list_filter = ['employment_type', 'is_current', 'start_date', 'end_date']
     search_fields = ['company', 'role', 'employment_type', 'location', 'start_date', 'end_date', 'description', 'company_url', 'display_order']
 
-admin.site.register(Education)
+@admin.register(Education)
+class EducationAdmin(admin.ModelAdmin):
+    list_display = ['id', 'instituition', 'degree', 'field_of_study', 'start_year', 'end_year', 'grade', 'description']
+    list_filter = ['start_year', 'end_year']
+    search_fields = ['instituition', 'degree', 'field_of_study', 'start_year', 'end_year', 'grade', 'description']
+
 admin.site.register(ContactMessage)

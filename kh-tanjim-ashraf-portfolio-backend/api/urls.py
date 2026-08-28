@@ -1,6 +1,13 @@
 from django.urls import path, include
 from account.views import Profile
-from portfolio.views import Skills, SkillDetail, Experiences, ExperienceDetail
+from portfolio.views import (
+    Skills, 
+    SkillDetail, 
+    Experiences, 
+    ExperienceDetail, 
+    Education,
+    EducationDetail
+)
 
 urlpatterns = [
     path('auth/', include('account.urls')),
@@ -13,4 +20,8 @@ urlpatterns = [
     # Experience
     path('experiences/', view=Experiences.as_view()),
     path('experiences/<int:id>/', view=ExperienceDetail.as_view()),
+
+    # Education
+    path('education/', view=Education.as_view()),
+    path('education/<int:id>/', view=EducationDetail.as_view()),
 ]

@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from .models import Skill, Experience
+from .models import Skill, Experience, Education as EducationModel
 from rest_framework.views import APIView
-from .serializers import SkillSerializer, ExperienceSerializer
+from .serializers import SkillSerializer, ExperienceSerializer, EducationSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from .filters import SkillFilter
@@ -125,4 +125,60 @@ class ExperienceDetail(APIView):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    
+
+
+# Education
+class Education(APIView):
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            self.permission_classes = [AllowAny]
+
+        if self.request.method == "POST":
+            self.permission_classes = [IsAuthenticated]
+        
+        return [permission() for permission in self.permission_classes]
+
+    def get(self, request):
+        queryset = EducationModel.objects.all()
+
+        serializer = EducationSerializer(instance=queryset, many=True)
+        
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = EducationSerializer(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+class EducationDetail(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, id):
+        queryset = get_object_or_404(EducationModel, pk=id)
+
+        serializer = EducationSerializer(instance=queryset)
+
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    def patch(self, request, id):
+        queryset = get_object_or_404(EducationModel, pk=id)
+
+        serializer = EducationSerializer(instance=queryset, data=request.data, partial=True)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, id):
+        queryset = get_object_or_404(EducationModel, pk=id)
+
+        queryset.delete()
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
