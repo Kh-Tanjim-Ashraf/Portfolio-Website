@@ -28,7 +28,7 @@ class Skill(TimestampMixins):
     is_featured = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'Skill: {self.name} --- Category: {self.get_category_display()} --- Proficiency: {self.proficiency} --- Display Order: {self.display_order}'
+        return f'{self.name}'
 
 
 

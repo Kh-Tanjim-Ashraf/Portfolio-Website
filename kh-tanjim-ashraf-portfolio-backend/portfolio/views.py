@@ -1,12 +1,13 @@
 from django.shortcuts import render
-from .models import Skill, Experience, Education as EducationModel
+from .models import Skill, Experience, Education as EducationModel, Project
 from rest_framework.views import APIView
-from .serializers import SkillSerializer, ExperienceSerializer, EducationSerializer
+from .serializers import SkillSerializer, ExperienceSerializer, EducationSerializer, ProjectsSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from .filters import SkillFilter
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from utils.custom_pagination import CustomPagination
 
 
 
@@ -182,3 +183,24 @@ class EducationDetail(APIView):
         queryset.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
+# Project
+class Projects(APIView):
+
+    def get(self, request):
+        # Mandatory to use `order_by` while using pagination
+        queryset = Project.objects.order_by('id')
+
+        paginator = CustomPagination(page_size=9)
+
+        paginated_queryset = paginator.paginate_queryset(queryset=queryset, request=request, view=self)
+
+        serializer = ProjectsSerializer(paginated_queryset, many=True)
+
+        response = paginator.get_paginated_response(serializer.data)
+
+        response.status_code = status.HTTP_206_PARTIAL_CONTENT
+
+        return response

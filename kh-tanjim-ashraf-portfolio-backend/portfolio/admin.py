@@ -10,7 +10,15 @@ class SkillAdmin(admin.ModelAdmin):
     # Search accorss relationships (foreign keys) using `__`; Ttechnique is also allowed to be used in any other class attributes
     search_fields = ['id', 'name', 'category', 'proficiency', 'display_order']
 
-admin.site.register(Project)
+@admin.register(Project)
+class ProjectAdmin(admin.ModelAdmin):
+    list_display = ['id', 'title', 'get_skills', 'summary', 'category', 'live_url', 'is_featured', 'completed_date', 'display_order']
+
+    # Display `skill` as string, since it's a M2M field
+    def get_skills(self, obj):
+        return ', '.join([tag.name for tag in obj.skill.all()])
+
+    get_skills.short_description = 'Skill'
 
 @admin.register(Experience)
 class ExperienceAdmin(admin.ModelAdmin):
