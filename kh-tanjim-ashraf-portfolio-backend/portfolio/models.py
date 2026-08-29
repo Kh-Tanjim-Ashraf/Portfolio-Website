@@ -23,7 +23,7 @@ class Skill(TimestampMixins):
     name = models.CharField(max_length=50, unique=True)
     category = models.CharField(max_length=10, choices=Category.choices)
     proficiency = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(100)])
-    icon = models.ImageField(upload_to='portfolio/icon/')
+    icon = models.ImageField(upload_to='portfolio/skill/icon/')
     display_order = models.PositiveSmallIntegerField(default=0)
     is_featured = models.BooleanField(default=False)
 
