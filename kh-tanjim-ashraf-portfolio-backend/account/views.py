@@ -7,6 +7,8 @@ from django.contrib.auth import authenticate
 from utils.jwt_token_generator import get_tokens_for_user
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from .models import Profile as ProfileModel
+from rest_framework_simplejwt.exceptions import TokenError
+from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class Login(APIView):
@@ -114,3 +116,29 @@ class Profile(APIView):
             serializer.save()
 
             return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+
+# Blacklist specific refresh token
+class Logout(APIView):
+
+    def post(self, request):
+        try:
+            # Retrieve the refresh token
+            refresh_token = request.data.get("refresh")
+
+            # Check if any refresh_token is passed in the request body
+            if not refresh_token:
+                return Response(data={"error": "Token is required."}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Instantiating the `RefreshToken` dynamically checks the validity of the token
+            token = RefreshToken(token=refresh_token)
+
+            # Blacklist the specific token
+            token.blacklist()
+
+            return Response(data={"message":"Successfully logged out."}, status=status.HTTP_205_RESET_CONTENT)
+
+        except TokenError as e:
+            # Handle invalid, expired or already blacklisted tokens
+            return Response(data={"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
