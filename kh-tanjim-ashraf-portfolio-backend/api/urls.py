@@ -7,7 +7,8 @@ from portfolio.views import (
     ExperienceDetail, 
     Education,
     EducationDetail,
-    Projects
+    Projects,
+    ProjectDetail,
 )
 
 urlpatterns = [
@@ -28,4 +29,5 @@ urlpatterns = [
 
     # Project
     path('projects/', view=Projects.as_view()),
+    path('projects/<str:slug>/', view=ProjectDetail.as_view()),
 ]

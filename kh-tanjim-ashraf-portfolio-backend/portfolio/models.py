@@ -34,11 +34,11 @@ class Skill(TimestampMixins):
 
 class Project(TimestampMixins):
     class Category(models.TextChoices):
-        WEB = 'We', 'Web'
-        MOBILE = 'Mo', 'Mobile'
-        API = 'Ap', 'API'
-        ML = 'Ml', 'ML'
-        OTHER = 'Ot', 'Other'
+        WEB = 'web', 'Web'
+        MOBILE = 'mobile', 'Mobile'
+        API = 'api', 'API'
+        ML = 'ml', 'ML'
+        OTHER = 'other', 'Other'
     
     title = models.CharField(max_length=150, unique=True)
     slug = models.SlugField(max_length=200, unique=True, blank=True) # blank=True allows empty form submission
@@ -46,7 +46,7 @@ class Project(TimestampMixins):
     summary = models.CharField(max_length=200)
     description = models.TextField()
     cover_image = models.ImageField(upload_to="portfolio/project/coverImage/")
-    category = models.CharField(max_length=2, choices=Category.choices)
+    category = models.CharField(max_length=6, choices=Category.choices)
     live_url = models.URLField(max_length=255, blank=True, null=True, validators=[URLValidator(schemes=['https'])])
     github_url = models.URLField(max_length=255, blank=True, null=True, validators=[URLValidator(schemes=['https'])])
     is_featured = models.BooleanField(default=False)
