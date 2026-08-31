@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from .serializers import SkillSerializer, ExperienceSerializer, EducationSerializer, ProjectSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from .filters import SkillFilter
+from .filters import SkillFilter, ProjectFilter
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from utils.custom_pagination import CustomPagination
@@ -199,17 +199,26 @@ class Projects(APIView):
         return [permission() for permission in self.permission_classes]
 
     def get(self, request):
+        # 1. Make a query to retrieve all project records
         # Mandatory to use `order_by` while using pagination; To mitigate the `N+1 Query` issue, the `prefetch_related()` ORM method is defined
         queryset = Project.objects.prefetch_related('skill').order_by('id')
 
+        # 2. Pass the queryset to the filtering process regardless of the `request` containing any query-param
+        filterset = ProjectFilter(data=request.query_params, queryset=queryset)
+
+        # 3. Instantiate the custom pagination class with argument
         paginator = CustomPagination(page_size=9)
 
-        paginated_queryset = paginator.paginate_queryset(queryset=queryset, request=request, view=self)
+        # 4. Paginate the filtered queryset by passing as argument
+        paginated_queryset = paginator.paginate_queryset(queryset=filterset.qs, request=request, view=self)
 
+        # 5. Format the paginated result
         serializer = ProjectSerializer(paginated_queryset, many=True)
 
+        # 6. Use the built-in paginator response instead of `Response` class
         response = paginator.get_paginated_response(serializer.data)
 
+        # 7. Add status code along with the paginated response
         response.status_code = status.HTTP_206_PARTIAL_CONTENT
 
         return response

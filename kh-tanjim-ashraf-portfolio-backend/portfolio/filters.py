@@ -1,5 +1,5 @@
 import django_filters
-from .models import Skill
+from .models import Skill, Project
 from django.db.models import Q
 
 
@@ -39,6 +39,42 @@ class SkillFilter(django_filters.FilterSet):
         if value.lower() == 'featured':
             conditions |= Q(is_featured=True)
 
-        result = queryset.filter(conditions)
+        return queryset.filter(conditions)
 
-        return result
+
+
+class ProjectFilter(django_filters.FilterSet):
+
+    tech = django_filters.CharFilter(method='filter_by_tech', label='Filter by skill ID or name')
+
+    search = django_filters.CharFilter(method='filter_by_search', label='Search by title, summary & description')
+
+    ordering = django_filters.OrderingFilter(
+        fields=(
+            ('completed_date', 'completed_date'),
+            ('display_order', 'display_order')
+        )
+    )
+
+    class Meta:
+        model = Project
+        fields = ['category','is_featured']
+
+    def filter_by_tech(self, queryset, name, value):
+        '''
+        Filter by **skill-id**/**skill-name** by using the `?tech=` query-param in the request
+        '''
+        if value.isdigit():
+            conditions = Q(skill__id=int(value))
+        else:
+            conditions = Q(skill__name__icontains=value)
+
+        return queryset.filter(conditions).distinct()
+
+    def filter_by_search(self, queryset, name, value):
+        '''
+        Search by project title, summary & description
+        '''
+        conditions = Q(title__icontains=value) | Q(summary__icontains=value) | Q(description__icontains=value)
+
+        return queryset.filter(conditions)
