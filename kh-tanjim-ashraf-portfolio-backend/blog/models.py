@@ -38,8 +38,8 @@ class Tag(TimestampMixins):
 
 class Post(TimestampMixins):
     class Status(models.TextChoices):
-        DRAFT = 'D', 'Draft'
-        PUBLISHED = 'P', 'Published'
+        DRAFT = 'draft', 'Draft'
+        PUBLISHED = 'published', 'Published'
     
     title = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
@@ -53,7 +53,7 @@ class Post(TimestampMixins):
     category = models.ForeignKey(to=Category, on_delete=models.PROTECT, related_name='categories')
     tag = models.ManyToManyField(to=Tag, related_name="tags")
     author = models.ForeignKey(to=User, on_delete=models.DO_NOTHING)
-    status = models.CharField(max_length=1, choices=Status.choices, default=Status.DRAFT)
+    status = models.CharField(max_length=9, choices=Status.choices, default=Status.DRAFT)
     published_at = models.DateTimeField(null=True, blank=True)
     reading_time = models.PositiveIntegerField(help_text="In minutes — computed from word count, ~200 words/minute", blank=True)
     is_featured = models.BooleanField(default=False)
