@@ -22,4 +22,4 @@ class Profile(TimestampMixins):
     is_available_for_hire = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.full_name
+        return f'{self.full_name}'

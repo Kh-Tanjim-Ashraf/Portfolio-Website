@@ -13,7 +13,7 @@ class Category(TimestampMixins):
     description = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.name}'
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -27,7 +27,7 @@ class Tag(TimestampMixins):
     slug = models.SlugField(max_length=100, unique=True, blank=True) # blank=True allows empty form submission
 
     def __str__(self):
-            return self.name
+            return f'{self.name}'
     
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -59,7 +59,7 @@ class Post(TimestampMixins):
     is_featured = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'Category:{self.category}; Is-Read: {self.get_status_display()}; Post: {self.title}'
+        return f'{self.title}'
 
     def save(self, *args, **kwargs):
         if not self.slug:
