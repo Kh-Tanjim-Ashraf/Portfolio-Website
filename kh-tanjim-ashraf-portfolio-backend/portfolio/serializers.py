@@ -40,7 +40,9 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     # Tips: but to mitigate the `N+1 Query` issue, inside it's associated View (`Projects`) class, while making the query to the parent-table, use the `prefetch_related()` ORM method.
 
-    # Returns the primary keys (`id`) of skills associated with each projects; Since it's an M2M field, thus defining `many=True` is mandatory
+    # Note: Returns the primary keys (`id`) of skills associated with each projects; Since it's an M2M field, thus defining `many=True` is mandatory; This field definition is required here to execute POST, PUT, PATCH, DELETE method
+
+    # Note: This field is used in both One-To-Many & Many-To-Many fields for serialization
     skill = serializers.PrimaryKeyRelatedField(
         queryset = Skill.objects.all(),
         many = True
