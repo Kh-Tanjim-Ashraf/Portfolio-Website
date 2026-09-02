@@ -50,9 +50,10 @@ class Post(TimestampMixins):
     content_markdown = models.TextField()
     content_html = models.TextField(blank=True, editable=False) # blank=True, editable=False hides it from standard admin forms
     cover_image = models.ImageField(upload_to='blog/post/coverImage')
-    category = models.ForeignKey(to=Category, on_delete=models.PROTECT, related_name='categories')
-    tag = models.ManyToManyField(to=Tag, related_name="tags")
-    author = models.ForeignKey(to=User, on_delete=models.DO_NOTHING)
+    # Note: Usually `related_name` is used for reverse lookups. In this scenario, we can access all the records of associated posts from a specific category record through this attribute.
+    category = models.ForeignKey(to=Category, on_delete=models.PROTECT, related_name='posts')
+    tag = models.ManyToManyField(to=Tag, related_name="posts")
+    author = models.ForeignKey(to=User, on_delete=models.DO_NOTHING, related_name='posts')
     status = models.CharField(max_length=9, choices=Status.choices, default=Status.DRAFT)
     published_at = models.DateTimeField(null=True, blank=True)
     reading_time = models.PositiveIntegerField(help_text="In minutes — computed from word count, ~200 words/minute", blank=True)
