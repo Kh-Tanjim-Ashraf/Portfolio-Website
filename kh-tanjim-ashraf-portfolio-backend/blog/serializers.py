@@ -11,7 +11,7 @@ class CategoryMinimalSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ['id','name']
+        fields = ['id','name','slug']
 
 
 
@@ -28,7 +28,6 @@ class UserMinimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id','username']
-
 
 
 
