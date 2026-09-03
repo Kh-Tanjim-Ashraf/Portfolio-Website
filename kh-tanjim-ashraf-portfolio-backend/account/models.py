@@ -1,7 +1,10 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from shared.models import TimestampMixins
 from django.core.validators import MaxValueValidator, URLValidator
+
+
+User = get_user_model()
 
 
 

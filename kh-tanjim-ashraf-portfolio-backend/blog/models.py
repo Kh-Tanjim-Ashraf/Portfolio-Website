@@ -1,9 +1,12 @@
 from django.db import models
 from shared.models import TimestampMixins
 from django.utils.text import slugify
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 import uuid
 import markdown
+
+
+User = get_user_model()
 
 
 
