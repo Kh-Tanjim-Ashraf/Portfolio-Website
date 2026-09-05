@@ -9,7 +9,7 @@ class SkillFilter(django_filters.FilterSet):
 
     search = django_filters.CharFilter(method='filter_by_search')
 
-    # `django_filters.OrderingFilter` fields anatomy: (query_value, model_field)
+    # `django_filters.OrderingFilter` fields anatomy: # ('ORM path', 'API query parameter name')
     # Note: The `query_value` comes from the query-parameter of the client request.
 
     ordering = django_filters.OrderingFilter(
@@ -69,7 +69,7 @@ class ProjectFilter(django_filters.FilterSet):
         else:
             conditions = Q(skill__name__icontains=value)
 
-        return queryset.filter(conditions).distinct()
+        return queryset.filter(conditions)
 
     def filter_by_search(self, queryset, name, value):
         '''

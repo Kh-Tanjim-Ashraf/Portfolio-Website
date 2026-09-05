@@ -200,8 +200,8 @@ class Projects(APIView):
 
     def get(self, request):
         # 1. Make a query to retrieve all project records
-        # Mandatory to use `order_by` while using pagination; To mitigate the `N+1 Query` issue, the `prefetch_related()` ORM method is defined
-        queryset = Project.objects.prefetch_related('skill').order_by('id')
+        # Mandatory to use `order_by` while using pagination; To mitigate the `N+1 Query` issue, the `prefetch_related()` ORM method is defined; Enforce `distinct()` to eliminate duplicates from the reverse JOIN
+        queryset = Project.objects.prefetch_related('skill').order_by('id').distinct()
 
         # 2. Pass the queryset to the filtering process regardless of the `request` containing any query-param
         filterset = ProjectFilter(data=request.query_params, queryset=queryset)
