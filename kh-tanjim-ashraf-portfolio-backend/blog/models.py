@@ -93,11 +93,11 @@ class PostLike(TimestampMixins):
 
 class PostLikeViewCount(TimestampMixins):
     post = models.OneToOneField(to=Post, on_delete=models.CASCADE, related_name='likesNviews')
-    like_count = models.PositiveIntegerField(default=0)
-    view_count = models.PositiveIntegerField(default=0)
+    likes_count = models.PositiveIntegerField(default=0)
+    views_count = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return f'Like: {self.like_count}; Views: {self.view_count}; {self.post.title}'
+        return f'Like: {self.likes_count}; Views: {self.views_count}; {self.post.title}'
 
 
 
