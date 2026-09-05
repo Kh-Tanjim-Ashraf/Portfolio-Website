@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Category, Tag, Post, PostLike, PostLikeViewCount, Comment
+from rangefilter.filters import NumericRangeFilterBuilder
 
 
 @admin.register(Category)
@@ -28,5 +29,19 @@ class PostAdmin(admin.ModelAdmin):
 
 
 admin.site.register(PostLike)
-admin.site.register(PostLikeViewCount)
+
+
+
+@admin.register(PostLikeViewCount)
+class PostLikeViewCountAdmin(admin.ModelAdmin):
+    list_display = ['id','post','likes_count','views_count']
+    list_display_links = ['id','post']
+    list_filter = [
+        ('likes_count', NumericRangeFilterBuilder(title='Range: Likes Count')),
+        ('views_count', NumericRangeFilterBuilder(title='Range: Views Count'))
+    ]
+    search_fields = ['id','post__title','post__slug','likes_count','views_count']
+
+
+
 admin.site.register(Comment)
