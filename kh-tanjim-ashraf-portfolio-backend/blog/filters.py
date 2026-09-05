@@ -1,6 +1,7 @@
 import django_filters
 from .models import Post
 from django.utils.text import slugify
+from django.db.models import Q
 
 
 
@@ -9,6 +10,16 @@ class PostFilter(django_filters.FilterSet):
     status = django_filters.CharFilter(method='filter_by_status', label='Filter by post status (Draft, published, all)')
     category = django_filters.CharFilter(method='filter_by_category', label='Filter by category slug')
     tag = django_filters.CharFilter(method='filter_by_tags', label='Filter by tag slug; Multiple tags accepted (comma-separated)')
+    search = django_filters.CharFilter(method='filter_by_search', label='Search by post\'s title, excerpt & content')
+    ordering = django_filters.OrderingFilter(
+        fields=(
+            # ('ORM path', 'API query parameter name')
+            ('published_at', 'published_at'),
+            ('likesNviews__views_count', 'views_count'),
+            ('likesNviews__likes_count', 'likes_count'),
+            ('title', 'title'),
+        )
+    )
 
     class Meta:
         model = Post
@@ -21,19 +32,18 @@ class PostFilter(django_filters.FilterSet):
         user = self.request.user
         return user.is_authenticated and user.is_superuser
 
-    def filter_by_user_permission(self, queryset, queryParamName, value):
+    def filter_by_user_permission(self, queryset, query_param_name=None, value=None, lookup_required=True):
         '''
         Filter out & return only the "Published" posts to anonymous users, otherwise return all matched records for admin.
         '''
 
         # Implement dynamic keyword argument using dictionary unpacking (**)
-        lookup = {queryParamName:value}
+        lookup = {query_param_name:value}
 
         if self.isAdmin():
-            return queryset.filter(**lookup)
+            return queryset.filter(**lookup) if lookup_required else queryset
         else:
-            return queryset.filter(status='published', **lookup)
-
+            return queryset.filter(status='published', **lookup) if lookup_required else queryset.filter(status='published')
 
     # `name=status` & `value=<value of the query-param>`
     def filter_by_status(self, queryset, name, value):
@@ -77,7 +87,25 @@ class PostFilter(django_filters.FilterSet):
 
             # Slugify each value of the list
             value = [slugify(val) for val in value_list]
-            return self.filter_by_user_permission(queryset, 'tag__slug__in', value).distinct()  # Remove duplicates
+            return self.filter_by_user_permission(queryset, 'tag__slug__in', value)
         else:
             value = slugify(value)
-            return self.filter_by_user_permission(queryset, 'tag__slug', value).distinct()
+            return self.filter_by_user_permission(queryset, 'tag__slug__icontains', value)
+
+    def filter_by_search(self, queryset, name, value):
+        '''
+        Search by post's title, excerpt & content (content_markdown)
+        '''
+        value = value.strip().lower()
+
+        # Magic keyword for `?search=featured` query-param
+        if value == 'featured':
+            return queryset.filter(is_featured=True)
+
+        queryset = queryset.filter(
+            Q(title__icontains=value)
+            | Q(excerpt__icontains=value)
+            | Q(content_markdown__icontains=value)
+        )
+
+        return self.filter_by_user_permission(queryset, lookup_required=False)

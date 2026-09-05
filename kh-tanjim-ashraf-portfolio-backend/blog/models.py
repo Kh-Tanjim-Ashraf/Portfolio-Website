@@ -97,7 +97,7 @@ class PostLikeViewCount(TimestampMixins):
     views_count = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return f'Like: {self.likes_count}; Views: {self.views_count}; {self.post.title}'
+        return f'{self.post.title} -> Like: {self.likes_count}; Views: {self.views_count}'
 
 
 
