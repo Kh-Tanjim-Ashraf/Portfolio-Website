@@ -34,11 +34,12 @@ admin.site.register(PostLike)
 
 @admin.register(PostLikeViewCount)
 class PostLikeViewCountAdmin(admin.ModelAdmin):
-    list_display = ['id','post','likes_count','views_count']
+    list_display = ['id','post','post__status','likes_count','views_count']
     list_display_links = ['id','post']
     list_filter = [
         ('likes_count', NumericRangeFilterBuilder(title='Range: Likes Count')),
-        ('views_count', NumericRangeFilterBuilder(title='Range: Views Count'))
+        ('views_count', NumericRangeFilterBuilder(title='Range: Views Count')),
+        'post__status'
     ]
     search_fields = ['id','post__title','post__slug','likes_count','views_count']
 

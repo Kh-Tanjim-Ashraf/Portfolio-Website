@@ -77,6 +77,8 @@ class Post(TimestampMixins):
         else:
             self.content_html = ""  # If user deleted/emptied the post content, this step makes sure the HTML field is also completely emptied out in the database.
 
+        # TODO: Create a table in `PostLikeViewCount` automatically when a new post gets created.
+
         super().save(*args, **kwargs)
 
 

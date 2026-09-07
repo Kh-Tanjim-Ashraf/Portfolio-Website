@@ -31,6 +31,14 @@ class UserMinimalSerializer(serializers.ModelSerializer):
 
 
 
+class PostMinimalSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Post
+        fields = ['id','title','slug']
+
+
+
 class PostsSerializer(serializers.ModelSerializer):
     # Use it when the client application only needs the reference ID to stitch data together on the frontend, avoiding the performance overhead of joining and serialization of nested object details.
 

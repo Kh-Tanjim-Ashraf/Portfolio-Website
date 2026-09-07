@@ -10,7 +10,7 @@ from portfolio.views import (
     Projects,
     ProjectDetail,
 )
-from blog.views import Posts
+from blog.views import Posts, PostDetail
 
 urlpatterns = [
     path('auth/', include('account.urls')),
@@ -34,4 +34,5 @@ urlpatterns = [
 
     # Post
     path('posts/', view=Posts.as_view()),
+    path('posts/<str:slug>/', view=PostDetail.as_view()),
 ]

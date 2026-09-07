@@ -170,3 +170,14 @@ SIMPLE_JWT = {
     #TODO: Implement this for the custom `Login()` class # `last_login` field in the `auth_user` table is updated upon login (if used only through default `TokenObtainPairView``).
     # "UPDATE_LAST_LOGIN": True
 }
+
+# Cache
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1", # Specify DB-1 for caching; Redis provides DB-0 to DB-15 generally for various purposes
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    }
+}

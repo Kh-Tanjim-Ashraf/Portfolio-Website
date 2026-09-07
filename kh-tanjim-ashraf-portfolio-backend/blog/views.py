@@ -1,11 +1,13 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Post
-from .serializers import PostsSerializer
+from .models import Post, PostLikeViewCount
+from .serializers import PostsSerializer, PostMinimalSerializer
 from rest_framework import status
 from .filters import PostFilter
 from rest_framework.permissions import AllowAny
 from utils.custom_pagination import CustomPagination
+from django.core.cache import cache
+from django.db.models import F
 
 
 
@@ -45,3 +47,53 @@ class Posts(APIView):
 
         # 8. Return the paginated response
         return response
+
+
+
+class PostDetail(APIView):
+
+    permission_classes = [AllowAny]
+
+    def isAdmin(self):
+        user = self.request.user
+        return user.is_authenticated and user.is_superuser
+
+    def get(self, request, slug):
+        try:
+            queryset = Post.objects.get(slug=slug)
+        except Post.DoesNotExist:
+            return Response(data={'error': 'No post found!'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Throw a 404 Not Found error if an anonymous user wants to view a post with `status=draft`
+        if queryset.status == 'draft' and not self.isAdmin():
+            return Response(data={"error":"No post found!"}, status=status.HTTP_404_NOT_FOUND)
+
+        visitor_id = request.META.get('HTTP_X_VISITOR_ID')
+
+        # Note: The post's view count will be updated only if a 'visitor_id' exists & passes the cooldown check mechanism. Admin/owner of the post will not have the `X-Visitor-Id` header
+        if visitor_id:
+            cache_key = f"viewed_post_{queryset.id}_{visitor_id}"
+
+            # Update `views_count` if key doesn't exist in cache
+            if not cache.get(cache_key):
+                PostLikeViewCount.objects.filter(post=queryset).update(views_count=F('views_count') + 1)
+
+                # Reload the old object with new field values from database to inside the memory
+                queryset.refresh_from_db()
+
+                # Set a cache key in Redis with boolean value (used in cooldown check later) for a day
+                cache.set(cache_key, True, timeout=86400)
+            
+        # Admin privilege to view draft posts
+        serializer = PostsSerializer(instance=queryset)
+
+        related_posts = queryset.category.posts.all()
+
+        related_posts_serialized = PostMinimalSerializer(instance=related_posts, many=True)
+
+        data = {
+            'Post': serializer.data,
+            'Related Posts': related_posts_serialized.data
+        }
+        
+        return Response(data=data, status=status.HTTP_200_OK)
