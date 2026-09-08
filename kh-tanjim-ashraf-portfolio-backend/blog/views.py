@@ -1,13 +1,14 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Post, PostLikeViewCount
-from .serializers import PostsSerializer, PostMinimalSerializer
+from .serializers import PostsSerializer, PostMinimalSerializer, PostLikeSerializer
 from rest_framework import status
 from .filters import PostFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from utils.custom_pagination import CustomPagination
 from django.core.cache import cache
 from django.db.models import F
+from django.db import IntegrityError
 
 
 
@@ -144,3 +145,34 @@ class PostDetail(APIView):
         except Post.DoesNotExist:
             data = {"message": "No post found!"}
             return Response(data=data, status=status.HTTP_404_NOT_FOUND)
+
+
+
+class PostLike(APIView):
+
+    permission_classes = [AllowAny]
+
+    def post(self, request, slug):
+        try:
+            post = Post.objects.get(slug=slug)
+        except Post.DoesNotExist:
+            return Response(data={'message': 'No post found!'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if `X-Visitor-Id` exists in the request-header
+        visitor_id = request.META.get('HTTP_X_VISITOR_ID')
+
+        if not visitor_id:
+            data = {"message": "'X-Visitor-Id' is missing in the Request header."}
+            return Response(data=data, status=status.HTTP_400_BAD_REQUEST)
+        
+        serializer = PostLikeSerializer(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            try:
+                serializer.save(post=post, visitor_id=visitor_id)
+            except IntegrityError:
+                data = {"message": "Post-like with this Post and Visitor id already exists."}
+                return Response(data=data, status=status.HTTP_409_CONFLICT)
+            
+            data = {'data': serializer.data, 'liked': True}
+            return Response(data=data, status=status.HTTP_201_CREATED)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Category, Tag
+from .models import Post, Category, Tag, PostLike
 from django.contrib.auth import get_user_model
 import markdown
 
@@ -88,3 +88,21 @@ class PostsSerializer(serializers.ModelSerializer):
                     data.setlist('tag', [int(x.strip()) for x in tag_data.split(',') if x.strip()])
 
         return super().to_internal_value(data)
+
+
+
+class PostLikeSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = PostLike
+        fields = ['id','post','visitor_id','ip_address']
+        read_only_fields = ['id','post','visitor_id']
+
+    # Required for GET request; Display only the ID with necessary field values avoiding multiple nested serialized data
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        # Mutate the existing field
+        representation['post'] = PostMinimalSerializer(instance=instance.post).data
+
+        return representation
