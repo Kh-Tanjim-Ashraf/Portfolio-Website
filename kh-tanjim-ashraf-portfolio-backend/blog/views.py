@@ -69,13 +69,22 @@ class Posts(APIView):
 
 class PostDetail(APIView):
 
-    permission_classes = [AllowAny]
+    def get_permissions(self):
+        SAFE_METHODS = ['GET']
+        
+        if self.request.method in SAFE_METHODS:
+            self.permission_classes = [AllowAny]
+        else:
+            self.permission_classes = [IsAuthenticated]
+
+        return [permission() for permission in self.permission_classes]
 
     def isAdmin(self):
         user = self.request.user
         return user.is_authenticated and user.is_superuser
 
     def get(self, request, slug):
+        # Required: Redis
         try:
             queryset = Post.objects.get(slug=slug)
         except Post.DoesNotExist:
@@ -114,3 +123,24 @@ class PostDetail(APIView):
         }
         
         return Response(data=data, status=status.HTTP_200_OK)
+
+    def patch(self, request, slug):
+        try:
+            queryset = Post.objects.get(slug=slug)
+            serializer = PostsSerializer(instance=queryset, data=request.data, partial=True)
+
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+                return Response(data=serializer.data, status=status.HTTP_200_OK)
+        except Post.DoesNotExist:
+            data = {"message": "No post found!"}
+            return Response(data=data, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, slug):
+        try:
+            queryset = Post.objects.get(slug=slug)
+            queryset.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Post.DoesNotExist:
+            data = {"message": "No post found!"}
+            return Response(data=data, status=status.HTTP_404_NOT_FOUND)
