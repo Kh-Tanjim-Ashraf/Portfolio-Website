@@ -84,9 +84,17 @@ class Post(TimestampMixins):
 
 
 class PostLike(TimestampMixins):
-    post = models.ForeignKey(to=Post, on_delete=models.CASCADE, related_name='postLikes')
+    post = models.ForeignKey(to=Post, on_delete=models.CASCADE, related_name='likes')
     visitor_id = models.UUIDField(default=uuid.uuid4)
     ip_address = models.GenericIPAddressField(null=True, blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['post','visitor_id'],
+                name='unique_post_visitor_like'
+            )
+        ]
 
     def __str__(self):
         return f'{self.ip_address}; {self.post.title}'
