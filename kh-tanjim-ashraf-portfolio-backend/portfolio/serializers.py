@@ -36,13 +36,13 @@ class SkillMinimalSerializer(serializers.ModelSerializer):
 
 class ProjectSerializer(serializers.ModelSerializer):
 
-    # Note: Only skill ids & names are enough for the list of projects, instead of the entire object of skillset. Hence it will reduce the bandwidth. And as the `GET` request is the public API endpoint, reducing bandwidth consumtion is a crucial enhancement in performance.
+    # Note: Only skill ids & names are enough for the list of projects, instead of the entire object of skillset. Hence, it will reduce the bandwidth. And as the `GET` request is the public API endpoint, reducing bandwidth consumtion is a crucial enhancement in performance.
 
     # Tips: but to mitigate the `N+1 Query` issue, inside it's associated View (`Projects`) class, while making the query to the parent-table, use the `prefetch_related()` ORM method.
 
     # Note: Returns the primary keys (`id`) of skills associated with each projects; Since it's an M2M field, thus defining `many=True` is mandatory; This field definition is required here to execute POST, PUT, PATCH, DELETE method
 
-    # Note: This field is used in both One-To-Many & Many-To-Many fields for serialization
+    # Note: This field is used in both One-To-Many & Many-To-Many fields for serialization; Defining this field as `PrimaryKeyRelatedField` explicitly makes the field writable, meaning it will accept POST, PUT, and PATCH requests on this field.
     skill = serializers.PrimaryKeyRelatedField(
         queryset = Skill.objects.all(),
         many = True

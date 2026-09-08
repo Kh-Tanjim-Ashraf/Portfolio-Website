@@ -4,7 +4,7 @@ from .models import Post, PostLikeViewCount
 from .serializers import PostsSerializer, PostMinimalSerializer
 from rest_framework import status
 from .filters import PostFilter
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from utils.custom_pagination import CustomPagination
 from django.core.cache import cache
 from django.db.models import F
@@ -14,6 +14,15 @@ from django.db.models import F
 class Posts(APIView):
 
     permission_classes = [AllowAny]
+
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            self.permission_classes = [AllowAny]
+
+        if self.request.method == 'POST':
+            self.permission_classes = [IsAuthenticated]
+
+        return [permission() for permission in self.permission_classes]
 
     def get(self, request):
         query_params = request.query_params
@@ -47,6 +56,14 @@ class Posts(APIView):
 
         # 8. Return the paginated response
         return response
+
+    def post(self, request):
+        serializer = PostsSerializer(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
 
 

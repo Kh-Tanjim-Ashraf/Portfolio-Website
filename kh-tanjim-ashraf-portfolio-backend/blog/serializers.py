@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import Post, Category, Tag
 from django.contrib.auth import get_user_model
+import markdown
 
 
 User = get_user_model()
@@ -40,11 +41,24 @@ class PostMinimalSerializer(serializers.ModelSerializer):
 
 
 class PostsSerializer(serializers.ModelSerializer):
-    # Use it when the client application only needs the reference ID to stitch data together on the frontend, avoiding the performance overhead of joining and serialization of nested object details.
+    # Note: Use it when the client application only needs the reference ID to stitch data together on the frontend, avoiding the performance overhead of joining and serialization of nested object details.
+
+    # Note: Defining explicitly will make the fields writable, meaning they will accept POST, PUT, and PATCH requests on these fields.
+    category = serializers.PrimaryKeyRelatedField(
+        queryset = Category.objects.all()
+    )
+    tag = serializers.PrimaryKeyRelatedField(
+        queryset = Tag.objects.all(),
+        many = True
+    )
+    author = serializers.PrimaryKeyRelatedField(
+        queryset = User.objects.all()
+    )
 
     class Meta:
         model = Post
-        fields = ['title','slug','excerpt','content_html','cover_image','category','tag','author','status','published_at','reading_time','is_featured']
+        fields = ['id','title','slug','excerpt','content_markdown','content_html','cover_image','category','tag','author','status','published_at','reading_time','is_featured']
+        read_only_fields = ['id','slug','content_html']
 
     # Only executes on GET request
     def to_representation(self, instance):
@@ -57,3 +71,20 @@ class PostsSerializer(serializers.ModelSerializer):
         representation['author'] = UserMinimalSerializer(instance=instance.author).data
 
         return representation
+
+    # Mutate & Type Casting (Before DRF performs any form-field validations): Since it's suppose to be a form-data, the tag will be received as ['1,2,3']. Intercept the request data to convert the list of single string element into a list of native python integers (IDs) before django performs field-level validation, this method comes into picture
+    def to_internal_value(self, data):
+        # Check if the request came from a form-data by confirming the existence of attribute of `QueryDict()` object
+        if hasattr(data, '_mutable'):
+            data = data.copy()
+
+            # Check if the `tag` key-value pair exists
+            if 'tag' in data:
+                tag_data = data['tag']
+
+                # Check if tag comes in as '1,2,3' format
+                if isinstance(tag_data, str):
+                    # Convert & set to list of native Python integer instead of string; Using `setlist()` is a standard way to assign a list to a `QueryDict()` object
+                    data.setlist('tag', [int(x.strip()) for x in tag_data.split(',') if x.strip()])
+
+        return super().to_internal_value(data)

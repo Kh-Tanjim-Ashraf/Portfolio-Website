@@ -10,7 +10,11 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 
-admin.site.register(Tag)
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ['id','name','slug']
+    list_display_links = ['id','name']
+    search_fields = ['id','name','slug']
 
 
 
@@ -28,7 +32,11 @@ class PostAdmin(admin.ModelAdmin):
 
 
 
-admin.site.register(PostLike)
+@admin.register(PostLike)
+class PostLikeAdmin(admin.ModelAdmin):
+    list_display = ['id','post','visitor_id','ip_address']
+    list_display_links = ['id','post']
+    search_fields = ['id','post__title__icontains','post__slug__icontains','post__excerpt__icontains','visitor_id','ip_address']
 
 
 
