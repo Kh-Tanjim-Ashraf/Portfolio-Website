@@ -53,4 +53,10 @@ class PostLikeViewCountAdmin(admin.ModelAdmin):
 
 
 
-admin.site.register(Comment)
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ['id','post__slug','name','email','content','parent__content','is_approved','created_at','updated_at']
+    list_display_links = ['id','post__slug']
+    search_fields = ['id','post__title__icontains','post__slug__icontains','post__excerpt__icontains','name','email','content','parent__content','is_approved']
+    list_filter = ['is_approved','created_at','updated_at']
+    list_editable = ['is_approved']

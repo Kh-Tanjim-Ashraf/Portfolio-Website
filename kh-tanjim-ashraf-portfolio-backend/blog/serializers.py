@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Category, Tag, PostLike
+from .models import Post, Category, Tag, PostLike, Comment
 from django.contrib.auth import get_user_model
 import markdown
 
@@ -92,7 +92,7 @@ class PostsSerializer(serializers.ModelSerializer):
 
 
 class PostLikeSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = PostLike
         fields = ['id','post','visitor_id','ip_address']
@@ -104,5 +104,29 @@ class PostLikeSerializer(serializers.ModelSerializer):
 
         # Mutate the existing field
         representation['post'] = PostMinimalSerializer(instance=instance.post).data
+
+        return representation
+
+
+
+class PostRepliesSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = ['id','post','name','website','content','is_approved']
+
+
+
+class PostCommentsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Comment
+        fields = ['id','post','name','website','content','is_approved']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        # Replies will displayed as nested under parents
+        representation['replies'] = PostRepliesSerializer(instance=instance.replies.all(), many=True).data
 
         return representation

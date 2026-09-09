@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Post, PostLikeViewCount
-from .serializers import PostsSerializer, PostMinimalSerializer, PostLikeSerializer
+from .models import Post, PostLikeViewCount, Comment
+from .serializers import PostsSerializer, PostMinimalSerializer, PostLikeSerializer, PostCommentsSerializer
 from rest_framework import status
 from .filters import PostFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -176,3 +176,23 @@ class PostLike(APIView):
             
             data = {'data': serializer.data, 'liked': True}
             return Response(data=data, status=status.HTTP_201_CREATED)
+
+
+
+class PostComments(APIView):
+
+    def get(self, request, slug):
+        try:
+            # Retrieved the post with similar slug from the DB
+            post = Post.objects.get(slug=slug)
+
+            # Retrieved the approved comments of that specific post
+            queryset = post.comments.select_related('parent').filter(parent=None,is_approved=True).order_by('-created_at')
+
+            serializer = PostCommentsSerializer(instance=queryset, many=True)
+
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        except:
+            data={"message":"No post found!"}
+
+            return Response(data=data, status=status.HTTP_404_NOT_FOUND)

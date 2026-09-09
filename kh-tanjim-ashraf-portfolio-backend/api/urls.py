@@ -13,7 +13,8 @@ from portfolio.views import (
 from blog.views import (
     Posts, 
     PostDetail,
-    PostLike
+    PostLike,
+    PostComments,
 )
 
 urlpatterns = [
@@ -42,4 +43,7 @@ urlpatterns = [
 
     # PostLike
     path('posts/<str:slug>/like/', view=PostLike.as_view()),
+
+    # Comment
+    path('posts/<str:slug>/comments/', view=PostComments.as_view()),
 ]

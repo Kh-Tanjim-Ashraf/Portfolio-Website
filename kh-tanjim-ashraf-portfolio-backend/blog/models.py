@@ -4,6 +4,7 @@ from django.utils.text import slugify
 from django.contrib.auth import get_user_model
 import uuid
 import markdown
+from django.core.exceptions import ValidationError
 
 
 User = get_user_model()
@@ -113,12 +114,23 @@ class PostLikeViewCount(TimestampMixins):
 
 class Comment(TimestampMixins):
     post = models.ForeignKey(to=Post, on_delete=models.CASCADE, related_name='comments')
-    name = models.CharField(max_length=150)
-    email = models.EmailField() # Default max_length=254
-    website = models.CharField(max_length=255, null=True, blank=True)
-    content = models.TextField()
-    parent = models.ForeignKey(to='self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
+    name = models.CharField(verbose_name='Commenter name', max_length=150)
+    email = models.EmailField(verbose_name='Commenter email') # Default max_length=254
+    website = models.CharField(verbose_name='Commenter website (Optional)',max_length=255, null=True, blank=True)
+    content = models.TextField(verbose_name='Comment')
+    parent = models.ForeignKey(verbose_name='Reply', to='self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies')
     is_approved = models.BooleanField(default=False)
 
     def __str__(self):
-        return f'{self.post}; {self.email}; {self.content[15]}...'
+        return f'{self.content[:30]}...'
+    
+    def save(self, *args, **kwargs):
+        # Prevents nested replies, since only one-level deep replies are allowed
+        if self.parent and self.parent.parent:
+            raise ValidationError(
+                message="The reply '%(nested_reply)s' reaches maximum thread depth level.",
+                code='maximum_thread_depth_reached',
+                params={"nested_reply": self.content}
+            )
+        
+        return super().save(*args, **kwargs)
