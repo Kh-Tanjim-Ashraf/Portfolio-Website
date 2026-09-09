@@ -181,6 +181,8 @@ class PostLike(APIView):
 
 class PostComments(APIView):
 
+    permission_classes = [AllowAny]
+
     def get(self, request, slug):
         try:
             # Retrieved the post with similar slug from the DB
@@ -192,7 +194,7 @@ class PostComments(APIView):
             serializer = PostCommentsSerializer(instance=queryset, many=True)
 
             return Response(data=serializer.data, status=status.HTTP_200_OK)
-        except:
+        except Post.DoesNotExist:
             data={"message":"No post found!"}
 
             return Response(data=data, status=status.HTTP_404_NOT_FOUND)

@@ -115,6 +115,13 @@ class PostRepliesSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ['id','post','name','website','content','is_approved']
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        representation['post'] = PostMinimalSerializer(instance=instance.post).data
+        
+        return representation
+
 
 
 class PostCommentsSerializer(serializers.ModelSerializer):
@@ -126,7 +133,9 @@ class PostCommentsSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
-        # Replies will displayed as nested under parents
+        representation['post'] = PostMinimalSerializer(instance=instance.post).data
+
+        # Replies will displayed as nested under parent comments
         representation['replies'] = PostRepliesSerializer(instance=instance.replies.all(), many=True).data
 
         return representation
