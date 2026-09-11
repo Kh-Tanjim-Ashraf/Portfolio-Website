@@ -10,3 +10,7 @@ media/
 # React
 node_modules/
 dist/
+
+# IDE
+.vscode
+.idea

@@ -1,7 +1,8 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Post, PostLikeViewCount, Comment
-from .serializers import PostsSerializer, PostMinimalSerializer, PostLikeSerializer, PostCommentsSerializer
+from .serializers import PostsSerializer, PostMinimalSerializer, PostLikeSerializer, PostCommentsSerializer, \
+    PostRepliesSerializer
 from rest_framework import status
 from .filters import PostFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -197,4 +198,32 @@ class PostComments(APIView):
         except Post.DoesNotExist:
             data={"message":"No post found!"}
 
+            return Response(data=data, status=status.HTTP_404_NOT_FOUND)
+
+    def post(self, request, slug):
+        try:
+            post = Post.objects.get(slug=slug)
+
+            # Boolean to toggle the response body
+            isComment = True
+
+            # Route the request to either comment/reply serializer based on `parent` key-value pair in the body
+            if not request.data.get('parent'):
+                serializer = PostCommentsSerializer(data=request.data)
+            else:
+                isComment = False
+                serializer = PostRepliesSerializer(data=request.data)
+            
+            if serializer.is_valid(raise_exception=True):
+                serializer.save(post=post)
+                data = {
+                    "message": f"Your {'comment' if isComment else 'reply'} is awaiting approval.",
+                    "data": serializer.data
+                }
+                
+                return Response(data=data, status=status.HTTP_201_CREATED)
+            
+        except Post.DoesNotExist:
+            data={"message":"No post found!"}
+            
             return Response(data=data, status=status.HTTP_404_NOT_FOUND)

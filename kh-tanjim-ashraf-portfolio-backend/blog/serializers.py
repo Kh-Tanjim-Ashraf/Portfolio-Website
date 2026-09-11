@@ -111,14 +111,28 @@ class PostLikeSerializer(serializers.ModelSerializer):
 
 class PostRepliesSerializer(serializers.ModelSerializer):
 
+    # Explicitly defined to make the field (parent) accept integer IDs while handling POST, PATCH, PUT requests
+    parent = serializers.PrimaryKeyRelatedField(
+        queryset = Comment.objects.all()
+    )
+
     class Meta:
         model = Comment
-        fields = ['id','post','name','website','content','is_approved']
+        fields = ['id','name','email','website','reply','parent']
+        read_only_fields = ['id']
+        extra_kwargs = {
+            # Explicitly made the `email` field hidden for GET request
+            'email': {'write_only': True},
+            
+            # Rename the `content` field to `reply`, making it more declarative
+            'reply': {'source': 'content'}
+        }
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-
-        representation['post'] = PostMinimalSerializer(instance=instance.post).data
+        
+        # Remove the parent-id while diplaying data
+        representation.pop('parent', None)
         
         return representation
 
@@ -128,14 +142,27 @@ class PostCommentsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ['id','post','name','website','content','is_approved']
+        fields = ['id','post','name','email','website','comment']
+        read_only_fields = ['id','post']
+        extra_kwargs = {
+            # Explicitly made the `email` field hidden for GET request
+            'email': {'write_only': True},
+            
+            # Rename the `content` field to `comment`, making it more declarative
+            'comment': {'source': 'content'}
+        }
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
 
+        # Post(s) will display with their ID, title & slug instead of the entire object(s).
         representation['post'] = PostMinimalSerializer(instance=instance.post).data
 
-        # Replies will displayed as nested under parent comments
-        representation['replies'] = PostRepliesSerializer(instance=instance.replies.all(), many=True).data
+        # Approved replies will be displayed as nested under parent comments if exists any; Included externally to the serializer object
+        if instance.replies.filter(is_approved=True).count():
+            representation['replies'] = PostRepliesSerializer(instance=instance.replies.filter(is_approved=True), many=True).data
+        else:
+            # Remove the 'replies' key-value pair if no replies avaiable for the associate comment.
+            representation.pop('replies', None)
 
         return representation
