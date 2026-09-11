@@ -177,6 +177,8 @@ class CommentsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['id','post','name','email','website','content','parent','is_approved']
+        # Every field will be ignored except the `is_approved` field in PATCH request
+        read_only_fields = ['id','post','name','email','website','content','parent']
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)

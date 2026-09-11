@@ -245,3 +245,53 @@ class Comments(APIView):
         serializer = CommentsSerializer(instance=queryset, many=True)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+
+class CommentDetail(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, reuest, id):
+        try:
+            queryset = Comment.objects.get(id=id)
+
+            serializer = CommentsSerializer(instance=queryset)
+
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+        
+        except Comment.DoesNotExist:
+
+            return Response(data={"message": "No comment found!"}, status=status.HTTP_404_NOT_FOUND)
+
+    def patch(self, request, id):
+        try:
+            queryset = Comment.objects.get(id=id)
+
+            serializer = CommentsSerializer(instance=queryset, data=request.data, partial=True)
+
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+
+                data = {
+                    "message": "Comment updated.",
+                    "data": serializer.data
+                }
+
+                return Response(data=data, status=status.HTTP_200_OK)
+
+        except Comment.DoesNotExist:
+
+            return Response(data={"message": "No comment found!"}, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, id):
+        try:
+            queryset = Comment.objects.get(id=id)
+
+            queryset.delete()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        except Comment.DoesNotExist:
+
+            return Response(data={"message": "No comment found!"}, status=status.HTTP_404_NOT_FOUND)

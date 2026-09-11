@@ -15,7 +15,8 @@ from blog.views import (
     PostDetail,
     PostLike,
     PostComments,
-    Comments
+    Comments,
+    CommentDetail
 )
 
 urlpatterns = [
@@ -50,4 +51,5 @@ urlpatterns = [
 
     # Comment - Admin API
     path('comments/', view=Comments.as_view()),
+    path('comments/<int:id>/', view=CommentDetail.as_view()),
 ]
