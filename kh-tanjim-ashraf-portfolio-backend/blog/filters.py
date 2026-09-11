@@ -1,5 +1,5 @@
 import django_filters
-from .models import Post
+from .models import Post, Comment
 from django.utils.text import slugify
 from django.db.models import Q
 
@@ -109,3 +109,16 @@ class PostFilter(django_filters.FilterSet):
         )
 
         return self.filter_by_user_permission(queryset, lookup_required=False)
+
+
+
+class CommentFilter(django_filters.FilterSet):
+
+    post = django_filters.CharFilter(method='filter_by_post', label='Filter by post slug')
+
+    class Meta:
+        model = Comment
+        fields = ['is_approved']
+
+    def filter_by_post(self, queryset, name, value):
+        return queryset.filter(post__slug__icontains=value)

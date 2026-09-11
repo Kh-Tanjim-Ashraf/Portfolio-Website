@@ -4,7 +4,7 @@ from .models import Post, PostLikeViewCount, Comment
 from .serializers import PostsSerializer, PostMinimalSerializer, PostLikeSerializer, PostCommentsSerializer, \
     PostRepliesSerializer, CommentsSerializer
 from rest_framework import status
-from .filters import PostFilter
+from .filters import PostFilter, CommentFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from utils.custom_pagination import CustomPagination
 from django.core.cache import cache
@@ -230,11 +230,18 @@ class PostComments(APIView):
 
 
 
+# Administrative operations on post-comments table
 class Comments(APIView):
 
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        queryset = Comment.objects.all()
+        queryset = Comment.objects.select_related('post','parent').all()
+
+        if request.query_params:
+            filterset = CommentFilter(data=request.query_params, queryset=queryset, request=request)
+            queryset = filterset.qs
+
         serializer = CommentsSerializer(instance=queryset, many=True)
+
         return Response(data=serializer.data, status=status.HTTP_200_OK)
