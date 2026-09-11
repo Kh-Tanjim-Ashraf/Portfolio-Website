@@ -2,7 +2,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import Post, PostLikeViewCount, Comment
 from .serializers import PostsSerializer, PostMinimalSerializer, PostLikeSerializer, PostCommentsSerializer, \
-    PostRepliesSerializer
+    PostRepliesSerializer, CommentsSerializer
 from rest_framework import status
 from .filters import PostFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
@@ -227,3 +227,14 @@ class PostComments(APIView):
             data={"message":"No post found!"}
             
             return Response(data=data, status=status.HTTP_404_NOT_FOUND)
+
+
+
+class Comments(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        queryset = Comment.objects.all()
+        serializer = CommentsSerializer(instance=queryset, many=True)
+        return Response(data=serializer.data, status=status.HTTP_200_OK)

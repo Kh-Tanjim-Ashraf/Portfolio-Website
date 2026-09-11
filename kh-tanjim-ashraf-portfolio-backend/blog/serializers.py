@@ -166,3 +166,21 @@ class PostCommentsSerializer(serializers.ModelSerializer):
             representation.pop('replies', None)
 
         return representation
+
+
+
+class CommentsSerializer(serializers.ModelSerializer):
+    '''
+    This serializer is created for the administrative operations on post-comments table.
+    '''
+
+    class Meta:
+        model = Comment
+        fields = ['id','post','name','email','website','content','parent','is_approved']
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+
+        representation['post'] = PostMinimalSerializer(instance=instance.post).data
+
+        return representation
