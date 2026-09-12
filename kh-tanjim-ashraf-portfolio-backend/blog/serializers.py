@@ -206,4 +206,4 @@ class TagsSerializer(TagMinimalSerializer):
 
     class Meta:
         model = TagMinimalSerializer.Meta.model
-        fields = TagMinimalSerializer.Meta.fields + ['total_posts']
+        fields = TagMinimalSerializer.Meta.fields + ['slug', 'total_posts']

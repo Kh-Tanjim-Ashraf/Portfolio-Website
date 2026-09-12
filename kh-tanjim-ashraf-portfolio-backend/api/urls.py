@@ -18,7 +18,9 @@ from blog.views import (
     Comments,
     CommentDetail,
     Categories,
-    Tags
+    CategoryDetail,
+    Tags,
+    TagDetail,
 )
 
 urlpatterns = [
@@ -57,7 +59,9 @@ urlpatterns = [
 
     # Category
     path('categories/', view=Categories.as_view()),
+    path('categories/<int:id>/', view=CategoryDetail.as_view()),
 
     # Tag
     path('tags/', view=Tags.as_view()),
+    path('tags/<int:id>/', view=TagDetail.as_view()),
 ]

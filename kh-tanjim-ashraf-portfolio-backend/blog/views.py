@@ -325,6 +325,25 @@ class Categories(APIView):
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
 
+
+class CategoryDetail(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, id):
+        try:
+            queryset = Category.objects.annotate(total_posts=Count('posts')).get(id=id)
+
+            serializer = CategoriesSerializer(instance=queryset)
+
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+        except Category.DoesNotExist:
+
+            return Response(data={"message": "No category found!"}, status=status.HTTP_404_NOT_FOUND)
+
+
+
 class Tags(APIView):
 
     def get_permissions(self):
@@ -350,3 +369,21 @@ class Tags(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+class TagDetail(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, id):
+        try:
+            queryset = Tag.objects.annotate(total_posts=Count('posts')).get(id=id)
+
+            serializer = TagsSerializer(instance=queryset)
+
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+        except Tag.DoesNotExist:
+
+            return Response(data={"message": "No tag found!"}, status=status.HTTP_404_NOT_FOUND)
