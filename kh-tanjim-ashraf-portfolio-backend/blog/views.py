@@ -356,6 +356,17 @@ class CategoryDetail(APIView):
         except Category.DoesNotExist:
             return Response(data={"message": "No category found!"}, status=status.HTTP_404_NOT_FOUND)
 
+    def delete(self, request, id):
+        try:
+            queryset = Category.objects.get(id=id)
+
+            queryset.delete()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        except Category.DoesNotExist:
+            return Response(data={"message": "No category found!"}, status=status.HTTP_404_NOT_FOUND)
+
 
 
 class Tags(APIView):
@@ -413,5 +424,16 @@ class TagDetail(APIView):
 
                 return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-        except Category.DoesNotExist:
+        except Tag.DoesNotExist:
+            return Response(data={"message": "No tag found!"}, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, id):
+        try:
+            queryset = Tag.objects.get(id=id)
+
+            queryset.delete()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        except Tag.DoesNotExist:
             return Response(data={"message": "No tag found!"}, status=status.HTTP_404_NOT_FOUND)
