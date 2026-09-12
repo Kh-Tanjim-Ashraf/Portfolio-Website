@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import Post, Category, Tag, PostLike, Comment
 from django.contrib.auth import get_user_model
-import markdown
 
 
 User = get_user_model()
@@ -72,7 +71,7 @@ class PostsSerializer(serializers.ModelSerializer):
 
         return representation
 
-    # Mutate & Type Casting (Before DRF performs any form-field validations): Since it's suppose to be a form-data, the tag will be received as ['1,2,3']. Intercept the request data to convert the list of single string element into a list of native python integers (IDs) before django performs field-level validation, this method comes into picture
+    # Mutate & Type Casting (Before DRF performs any form-field validations): Since it's supposed to be a form-data, the tag will be received as ['1,2,3']. Intercept the request data to convert the list of single string element into a list of native python integers (IDs) before django performs field-level validation, this method comes into picture
     def to_internal_value(self, data):
         # Check if the request came from a form-data by confirming the existence of attribute of `QueryDict()` object
         if hasattr(data, '_mutable'):
@@ -186,3 +185,25 @@ class CommentsSerializer(serializers.ModelSerializer):
         representation['post'] = PostMinimalSerializer(instance=instance.post).data
 
         return representation
+
+
+
+# Inherited
+class CategoriesSerializer(CategoryMinimalSerializer):
+    # Explicitly declare the external/annotated field
+    total_posts = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        # Inherit and extend the parent model, fields tuple dynamically
+        model = CategoryMinimalSerializer.Meta.model
+        fields = CategoryMinimalSerializer.Meta.fields + ['total_posts']
+
+
+
+# Inherited
+class TagsSerializer(TagMinimalSerializer):
+    total_posts = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = TagMinimalSerializer.Meta.model
+        fields = TagMinimalSerializer.Meta.fields + ['total_posts']

@@ -1,14 +1,14 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .models import Post, PostLikeViewCount, Comment
+from .models import Post, PostLikeViewCount, Comment, Category, Tag
 from .serializers import PostsSerializer, PostMinimalSerializer, PostLikeSerializer, PostCommentsSerializer, \
-    PostRepliesSerializer, CommentsSerializer
+    PostRepliesSerializer, CommentsSerializer, CategoriesSerializer, TagsSerializer
 from rest_framework import status
 from .filters import PostFilter, CommentFilter
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from utils.custom_pagination import CustomPagination
 from django.core.cache import cache
-from django.db.models import F
+from django.db.models import F, Count
 from django.db import IntegrityError
 
 
@@ -295,3 +295,25 @@ class CommentDetail(APIView):
         except Comment.DoesNotExist:
 
             return Response(data={"message": "No comment found!"}, status=status.HTTP_404_NOT_FOUND)
+
+
+
+class Categories(APIView):
+
+    def get(self, request):
+        queryset = Category.objects.annotate(total_posts=Count('posts')).order_by('name')
+
+        serializer = CategoriesSerializer(instance=queryset, many=True)
+
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+
+class Tags(APIView):
+
+    def get(self, request):
+        queryset = Tag.objects.annotate(total_posts=Count('posts')).order_by('name')
+
+        serializer = TagsSerializer(instance=queryset, many=True)
+
+        return Response(data=serializer.data, status=status.HTTP_200_OK)
