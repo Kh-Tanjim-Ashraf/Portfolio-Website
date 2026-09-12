@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Skill, Project, Experience, Education, ContactMessage
+from .models import Skill, Project, Experience, Education
 
 
 @admin.register(Skill)
@@ -31,5 +31,3 @@ class EducationAdmin(admin.ModelAdmin):
     list_display = ['id', 'instituition', 'degree', 'field_of_study', 'start_year', 'end_year', 'grade', 'description']
     list_filter = ['start_year', 'end_year']
     search_fields = ['instituition', 'degree', 'field_of_study', 'start_year', 'end_year', 'grade', 'description']
-
-admin.site.register(ContactMessage)

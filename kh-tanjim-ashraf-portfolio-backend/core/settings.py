@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'account',
     'portfolio',
     'blog',
+    'contact',
     'shared',
     # Loads browseable API templates, static files, system checks, and management commands.
     'rest_framework',
