@@ -342,6 +342,20 @@ class CategoryDetail(APIView):
 
             return Response(data={"message": "No category found!"}, status=status.HTTP_404_NOT_FOUND)
 
+    def patch(self, request, id):
+        try:
+            queryset = Category.objects.get(id=id)
+
+            serializer = CategoriesSerializer(instance=queryset, data=request.data, partial=True)
+
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+
+                return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+        except Category.DoesNotExist:
+            return Response(data={"message": "No category found!"}, status=status.HTTP_404_NOT_FOUND)
+
 
 
 class Tags(APIView):
@@ -386,4 +400,18 @@ class TagDetail(APIView):
 
         except Tag.DoesNotExist:
 
+            return Response(data={"message": "No tag found!"}, status=status.HTTP_404_NOT_FOUND)
+
+    def patch(self, request, id):
+        try:
+            queryset = Tag.objects.get(id=id)
+
+            serializer = TagsSerializer(instance=queryset, data=request.data, partial=True)
+
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+
+                return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+        except Category.DoesNotExist:
             return Response(data={"message": "No tag found!"}, status=status.HTTP_404_NOT_FOUND)
