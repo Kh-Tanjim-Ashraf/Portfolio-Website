@@ -300,6 +300,16 @@ class CommentDetail(APIView):
 
 class Categories(APIView):
 
+    def get_permissions(self):
+        SAFE_METHODS = ['GET']
+
+        if self.request.method in SAFE_METHODS:
+            self.permission_classes = [AllowAny]
+        else:
+            self.permission_classes = [IsAuthenticated]
+
+        return [permission() for permission in self.permission_classes]
+
     def get(self, request):
         queryset = Category.objects.annotate(total_posts=Count('posts')).order_by('name')
 
@@ -307,9 +317,25 @@ class Categories(APIView):
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
+    def post(self, request):
+        serializer = CategoriesSerializer(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
 
 class Tags(APIView):
+
+    def get_permissions(self):
+        SAFE_METHODS = ['GET']
+
+        if self.request.method in SAFE_METHODS:
+            self.permission_classes = [AllowAny]
+        else:
+            self.permission_classes = [IsAuthenticated]
+
+        return [permission() for permission in self.permission_classes]
 
     def get(self, request):
         queryset = Tag.objects.annotate(total_posts=Count('posts')).order_by('name')
@@ -317,3 +343,10 @@ class Tags(APIView):
         serializer = TagsSerializer(instance=queryset, many=True)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request):
+        serializer = TagsSerializer(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)

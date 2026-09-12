@@ -196,7 +196,7 @@ class CategoriesSerializer(CategoryMinimalSerializer):
     class Meta:
         # Inherit and extend the parent model, fields tuple dynamically
         model = CategoryMinimalSerializer.Meta.model
-        fields = CategoryMinimalSerializer.Meta.fields + ['total_posts']
+        fields = CategoryMinimalSerializer.Meta.fields + ['description', 'total_posts']
 
 
 
