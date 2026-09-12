@@ -22,6 +22,7 @@ from blog.views import (
     Tags,
     TagDetail,
 )
+from contact.views import Contacts
 
 urlpatterns = [
     path('auth/', include('account.urls')),
@@ -64,4 +65,7 @@ urlpatterns = [
     # Tag
     path('tags/', view=Tags.as_view()),
     path('tags/<int:id>/', view=TagDetail.as_view()),
+
+    # Contact
+    path('contact/', view=Contacts.as_view()),
 ]
