@@ -1,11 +1,11 @@
-from typing import Sequence
-
-from rest_framework import status, permissions
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import ContactMessage
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from .serializers import ContactsSerializer, ContactsDetailSerializer
+from .filters import ContactsFilter
+from utils.custom_pagination import  CustomPagination
 
 
 class Contacts(APIView):
@@ -23,9 +23,21 @@ class Contacts(APIView):
     def get(self, request):
         queryset = ContactMessage.objects.order_by('-created_at')
 
-        serializer = ContactsDetailSerializer(instance=queryset, many=True)
+        if request.query_params:
+            filterset = ContactsFilter(data=request.query_params, queryset=queryset, request=request)
+            queryset = filterset.qs
 
-        return Response(data=serializer.data, status=status.HTTP_200_OK)
+        paginator = CustomPagination(page_size=10)
+
+        paginated_queryset = paginator.paginate_queryset(queryset=queryset, request=request, view=self)
+
+        serializer = ContactsDetailSerializer(instance=paginated_queryset, many=True)
+
+        response = paginator.get_paginated_response(serializer.data)
+
+        response.status_code = status.HTTP_206_PARTIAL_CONTENT
+
+        return response
 
     def post(self, request):
         serializer = ContactsSerializer(data=request.data)
