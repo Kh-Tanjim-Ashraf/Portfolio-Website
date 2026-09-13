@@ -5,8 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .models import ContactMessage
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from .serializers import ContactsSerializer
-
+from .serializers import ContactsSerializer, ContactsDetailSerializer
 
 
 class Contacts(APIView):
@@ -24,7 +23,7 @@ class Contacts(APIView):
     def get(self, request):
         queryset = ContactMessage.objects.order_by('-created_at')
 
-        serializer = ContactsSerializer(instance=queryset, many=True)
+        serializer = ContactsDetailSerializer(instance=queryset, many=True)
 
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -34,3 +33,47 @@ class Contacts(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+class ContactDetail(APIView):
+
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, id):
+        try:
+            queryset = ContactMessage.objects.get(id=id)
+
+            serializer = ContactsDetailSerializer(instance=queryset)
+
+            return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+        except ContactMessage.DoesNotExist:
+
+            return Response(data={"message": "No contact message found!"}, status=status.HTTP_404_NOT_FOUND)
+
+    def patch(self, request, id):
+        try:
+            queryset = ContactMessage.objects.get(id=id)
+
+            serializer = ContactsDetailSerializer(instance=queryset, data=request.data, partial=True)
+
+            if serializer.is_valid(raise_exception=True):
+                serializer.save()
+
+                return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except ContactMessage.DoesNotExist:
+            return Response(data={"message": "No contact message found!"}, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, id):
+        try:
+            queryset = ContactMessage.objects.get(id=id)
+
+            queryset.delete()
+
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        except ContactMessage.DoesNotExist:
+
+            return Response(status=status.HTTP_404_NOT_FOUND)
