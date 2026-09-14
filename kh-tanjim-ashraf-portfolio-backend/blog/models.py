@@ -59,8 +59,8 @@ class Post(TimestampMixins):
     tag = models.ManyToManyField(to=Tag, related_name="posts")
     author = models.ForeignKey(to=User, on_delete=models.DO_NOTHING, related_name='posts')
     status = models.CharField(max_length=9, choices=Status.choices, default=Status.DRAFT)
-    published_at = models.DateTimeField(null=True, blank=True)
-    reading_time = models.PositiveIntegerField(help_text="In minutes — computed from word count, ~200 words/minute", blank=True)
+    published_at = models.DateTimeField(null=True, blank=True, help_text="Set automatically the first time status becomes PUBLISHED")   # TODO: Made the field readonly for the admin panel; Moreover, when an admin change a published post to draft later, this field will be set to null again & set a new published date when the post status is changed to published again.
+    reading_time = models.PositiveIntegerField(help_text="In minutes — computed from word count, ~200 words/minute", blank=True)    # TODO: Made the field readonly for the admin panel; Moreover, compute the word counts dynamically, ~200 words/minute
     is_featured = models.BooleanField(default=False)
 
     def __str__(self):
@@ -77,8 +77,6 @@ class Post(TimestampMixins):
             )
         else:
             self.content_html = ""  # If user deleted/emptied the post content, this step makes sure the HTML field is also completely emptied out in the database.
-
-        # TODO: Create a table in `PostLikeViewCount` automatically when a new post gets created.
 
         super().save(*args, **kwargs)
 
@@ -106,6 +104,11 @@ class PostLikeViewCount(TimestampMixins):
     post = models.OneToOneField(to=Post, on_delete=models.CASCADE, related_name='likesNviews')
     likes_count = models.PositiveIntegerField(default=0)
     views_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        db_table = 'Post_Metrics'
+        verbose_name = 'Post_Metric'
+        verbose_name_plural = 'Post_Metrics'
 
     def __str__(self):
         return f'{self.post.title} -> Like: {self.likes_count}; Views: {self.views_count}'

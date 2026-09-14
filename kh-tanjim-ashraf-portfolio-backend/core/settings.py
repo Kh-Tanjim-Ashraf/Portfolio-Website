@@ -48,8 +48,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'account',
     'portfolio',
-    'blog',
+    'blog.apps.BlogConfig',
     'contact',
+    'dashboard',
     'shared',
     # Loads browseable API templates, static files, system checks, and management commands.
     'rest_framework',

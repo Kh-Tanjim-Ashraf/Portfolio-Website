@@ -20,9 +20,9 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    list_display = ['id','title','excerpt','category','get_tags','author','is_featured','status','published_at','reading_time']
+    list_display = ['id','title','excerpt','category','get_tags','author','is_featured','status','published_at','reading_time','created_at','updated_at']
     list_display_links = ['id','title']
-    list_filter = ['status','is_featured']
+    list_filter = ['status','is_featured','published_at','created_at','updated_at']
     search_fields = ['id','title','excerpt','category__name','tag__name','author__username','is_featured','status','published_at','reading_time']
 
     def get_tags(self, obj):

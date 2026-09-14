@@ -26,6 +26,7 @@ from contact.views import (
     Contacts,
     ContactDetail
 )
+from dashboard.views import Dashboard
 
 urlpatterns = [
     path('auth/', include('account.urls')),
@@ -72,4 +73,7 @@ urlpatterns = [
     # Contact
     path('contact/', view=Contacts.as_view()),
     path('contact/<int:id>/', view=ContactDetail.as_view()),
+
+    # Dashboard - Analytics
+    path('dashboard/stats/', view=Dashboard.as_view()),
 ]
