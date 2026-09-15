@@ -24,6 +24,7 @@ env = environ.Env(
     SECRET_KEY=(str, get_random_secret_key()),  # fallback-development-secret-key
     DEBUG=(bool, False),
     ALLOWED_HOSTS=(list, []),
+    DATABASE_URL=(str, None)
 )
 
 # Read the .env file
@@ -97,13 +98,20 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if env('DATABASE_URL'):
+    DATABASES = {
+        'default': env.db('DATABASE_URL'),
     }
-}
+
+    # Recommended settings for Neon/Supabase pooled connections
+    DATABASES['default']['CONN_MAX_AGE'] = 60
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 
 # Password validation

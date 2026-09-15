@@ -97,7 +97,7 @@ class Education(TimestampMixins):
     start_year = models.DateTimeField()
     end_year = models.DateTimeField(null=True, blank=True)
     grade = models.CharField(max_length=30, null=True, blank=True)
-    description = models.CharField(null=True, blank=True)
+    description = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return f'{self.instituition}---{self.degree}: {self.field_of_study}'
