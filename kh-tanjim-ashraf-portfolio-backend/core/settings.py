@@ -202,5 +202,5 @@ CACHES = {
 # [Required for Production] Configure WhiteNoise to compress and cache your static assets efficiently
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
-    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage "},
 }
