@@ -151,7 +151,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 # [Required for Production] The absolute directory path where `collectstatic` will dump all static files
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles', 'static')
 
 # URL that handles the media served from MEDIA_ROOT
 MEDIA_URL = '/media/'
@@ -202,5 +202,5 @@ CACHES = {
 # [Required for Production] Configure WhiteNoise to compress and cache your static assets efficiently
 STORAGES = {
     "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
-    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedStaticFilesStorage"},
 }
